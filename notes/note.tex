@@ -1,0 +1,483 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,bm,mathtools,booktabs,graphicx}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\avg}[1]{\langle #1\rangle}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\Var}{\operatorname{Var}}
+\title{固定電荷complex SYKのKrylov時間発展と\\確率分布の幾何}
+\author{研究ノート}
+\date{2026年9月15日}
+\begin{document}
+\maketitle
+\begin{abstract}
+固定電荷complex Sachdev--Ye--Kitaev模型に現れる三重対角Hamiltonianを出発点として、
+Krylov complexity、1-Wasserstein距離、Fisher計量、Berry曲率を同じ状態族上で比較する。
+入力とするLanczos係数から短時間展開を独立に求めると、参照論文の短時間近似との係数の不一致が見つかる。
+係数を整合させた$\log\cosh$関数は小さい変形では良い近似になるが、有限の変形では$t^6$項で厳密解と異なる。
+また、初期点からのWasserstein距離が平均Krylov位置に等しいことは、任意の二時刻間の距離がその平均の差になることを意味しない。
+研究上の位置づけは再現計算と近似の検証であり、bulk時空や電磁場を新たに導出したと主張するものではない。
+\end{abstract}
+\tableofcontents
+
+\section{研究目的と比較する空間}
+ホログラフィーとは、重力を含む理論の情報を、それより低い次元の量子系によって記述する対応である。
+その対応で重力側の時空をbulk、量子系を置く側をboundaryと呼ぶ。
+Hashimoto--Tanahashiは、選んだ量子状態の集合を確率分布に写し、その間の輸送距離から
+bulkの動径方向に対応する量を構成することを提案している\cite{HashimotoTanahashi}。
+本ノートの目的は、その着想を評価するため、どの性質が確率分布と距離の定義だけから従い、
+どの性質に量子力学の時間発展や追加のbulk側の対応が必要かを分けることである。
+
+以下で比較するのは、同じ量子状態から得られる確率分布の時間依存である。
+整数$n$は測定結果を区別するラベル、$t$は量子力学の時間、
+後に導入する$\varphi$は状態を変形する位相パラメータである。
+これらのどれも、この段階ではbulkの時空座標ではない。
+
+Husimi $Q$分布は、調和振動子のコヒーレント状態$\ket{\alpha}$を用いて
+\begin{equation}
+ Q_\rho(\alpha)=\pi^{-1}\bra{\alpha}\rho\ket{\alpha}
+ \label{eq:husimi}
+\end{equation}
+と定義される、複素平面$\alpha\in\mathbb C$上の確率密度である。
+$\rho$は密度演算子である。本ノートの数値計算ではこの分布を使わず、
+Krylov基底で測定した離散確率を使う。この変更は輸送の基礎空間も変更するため、
+Husimi分布を用いた構成をそのまま再現したものではない。
+
+\section{固定電荷の模型と計算の入力}
+\subsection{保存電荷とdouble-scaling limit}
+complex Sachdev--Ye--Kitaev模型、以下complex SYK模型は、多数の複素フェルミオンをランダムな
+多体相互作用で結合した量子力学模型である。複素フェルミオンの粒子数に対応する$U(1)$対称性を持つ。
+$U(1)$は位相回転の群であり、保存電荷がその回転を生成する。
+保存電荷の固有値を固定した状態の部分空間を固定電荷sectorと呼ぶ。
+
+本ノートでは、フェルミオンの種類の数を$N$、各相互作用項に含まれる生成演算子と消滅演算子の数を
+それぞれ$p$とする。したがって一つの相互作用項は合計$2p$個のフェルミオン演算子を含む。
+\begin{equation}
+ \lambda=\frac{p^2}{N}>0
+ \label{eq:lambda}
+\end{equation}
+を固定して$N,p\to\infty$とする極限がdouble-scaling limitである。
+規格化した電荷sectorのラベルを$\mathcal Q\in(-1/2,1/2)$とする。
+符号を含む規約は以下の入力式で固定する。
+
+\subsection{Krylov基底と有効Hamiltonian}
+初期状態にHamiltonianを繰り返し作用させて得られるベクトルを直交化したものをKrylov基底と呼ぶ。
+その基底でHamiltonianは三重対角になる。double-scaled模型では、乱数平均後のモーメント計算を
+補助的な基底で表現でき、その整数ラベルを開いたchordの本数と対応させる。
+chordとは乱数平均で対になった相互作用の挿入を結ぶ線であり、物理空間の線分ではない。
+本ノートでは、この補助空間上の規格化された基底を$\ket n$、$n=0,1,\ldots$と書く。
+
+有効Hamiltonianを$H_{\rm K}$とし、隣り合う基底を結ぶ実係数を$b_n$と定義する。
+\begin{equation}
+ H_{\rm K}\ket n=b_{n+1}\ket{n+1}+b_n\ket{n-1},\qquad b_0=0.
+ \label{eq:hk}
+\end{equation}
+$b_n$がLanczos係数である。以下では$\hbar=1$とし、$b_n$はエネルギーの次元を持つ。
+
+入力はF\"orste--Kruse--NatuのarXiv:2512.07715v2、式(3.33)と(3.34)である\cite{Forste}。
+相互作用のエネルギー尺度を$\mathcal J>0$とし、
+\begin{align}
+ q&=\exp\left[-\frac{4\lambda}{1-4\mathcal Q^2}\right],\qquad 0<q<1,
+ \label{eq:q}\\
+ a&=\frac{\mathcal J(1-4\mathcal Q^2)^{p/2}}{\sqrt\lambda}
+ \exp\left[-\frac{\lambda}{2}
+ \frac{4\mathcal Q(\mathcal Q+1)-1}{1-4\mathcal Q^2}\right],
+ \label{eq:a}\\
+ [n]_q&=\frac{1-q^n}{1-q},\qquad b_n=a\sqrt{[n]_q}.
+ \label{eq:bn}
+\end{align}
+$q$は無次元の変形パラメータであり、保存電荷$\mathcal Q$とは異なる。
+$[n]_q$は式\eqref{eq:bn}で定義した数である。特に$a=b_1$である。
+この式を模型の定義として計算を検証する。微視的Hamiltonianから式\eqref{eq:bn}までの
+乱数平均・鞍点近似の導出全体を独立に再現したわけではない。
+
+\section{確率分布と1-Wasserstein距離}
+初期状態を$\ket0$として
+\begin{equation}
+ \ket{\psi(t)}=e^{-\ii H_{\rm K}t}\ket0
+ =\sum_{n\geq0}(-\ii)^n\chi_n(t)\ket n
+ \label{eq:state}
+\end{equation}
+と展開する。この位相規約では$\chi_n$は実数であり、
+\begin{equation}
+ \dot\chi_n=b_n\chi_{n-1}-b_{n+1}\chi_{n+1},\qquad
+ \chi_n(0)=\delta_{n0}.
+ \label{eq:evolution}
+\end{equation}
+ここでドットは$t$微分である。測定結果$n$の確率と、その平均を
+\begin{equation}
+ P_n(t)=\chi_n(t)^2,\qquad
+ C(t)=\sum_{n\geq0}nP_n(t)
+ \label{eq:complexity}
+\end{equation}
+と定義する。この$C$が今回のstate Krylov complexityであり、平均の基底ラベルを表す。
+
+二つの分布$P,R$の間で、$n$から$m$へ運ぶ確率を$\pi_{nm}\geq0$とする。
+輸送の前後の分布を保存する条件と1-Wasserstein距離は
+\begin{align}
+ \sum_m\pi_{nm}=P_n,
+ \qquad \sum_n\pi_{nm}=R_m,
+ \label{eq:coupling}\\
+ W_1(P,R)=\inf_\pi\sum_{n,m}|n-m|\pi_{nm}
+ \label{eq:w1}
+\end{align}
+である。整数間の距離を$|n-m|$と選んだことが定義の一部である。
+初期分布$\delta_0$からは全ての確率を$0$から運ぶ必要があるため、
+\begin{equation}
+ W_1(P(t),\delta_0)=\sum_n nP_n(t)=C(t).
+ \label{eq:w1equalsc}
+\end{equation}
+これは量子重力に関する仮定を使わない恒等式である。
+
+\subsection{初期点からの距離と、距離空間全体の一次元性}
+任意の二時刻では、式\eqref{eq:w1}から
+\begin{equation}
+ W_1(P(t_1),P(t_2))\geq|C(t_2)-C(t_1)|
+ \label{eq:meanbound}
+\end{equation}
+が従う。しかし一般に等号ではない。離散半直線上では
+\begin{equation}
+ W_1(P,R)=\sum_{k=0}^{\infty}
+ \left|\sum_{n=0}^k(P_n-R_n)\right|
+ \label{eq:cdf}
+\end{equation}
+であり、累積確率の差の符号が$k$によって変われば、平均の差より大きくなる。
+
+実際、$q=0.2$、$a=1$、$t_1=2$、$t_2=2.5$で数値的に
+\begin{align}
+ W_1(P(t_1),P(t_2))&=0.9804809132,\\
+ C(t_2)-C(t_1)&=0.9725992488
+ \label{eq:counterexample}
+\end{align}
+となる。$P_0$は$0.0003210442$から$0.0042618764$へ増え、平均位置が外へ進んでも
+初期点近くへ戻る確率が存在する。この例は、式\eqref{eq:w1equalsc}だけを根拠に
+状態列全体が実数直線に等長に埋め込めると結論してはいけないことを示す。
+これはHusimi分布による元の構成への反例ではなく、今回のKrylov分布に対する区別である。
+
+\section{短時間展開の独立検算}
+\subsection{最初の遷移で$t^2$項は決まる}
+式\eqref{eq:state}を展開すると、
+\begin{equation}
+ \ket{\psi(t)}=\ket0-\ii b_1t\ket1
+ -\frac{t^2}{2}\bigl(b_1^2\ket0+b_1b_2\ket2\bigr)+O(t^3).
+ \label{eq:shortstate}
+\end{equation}
+従って、遠い基底の詳細によらず
+\begin{equation}
+ C(t)=b_1^2t^2+O(t^4)=a^2t^2+O(t^4).
+ \label{eq:shortc}
+\end{equation}
+さらに$t^6$まで計算すると、$s=at$を無次元時間として
+\begin{equation}
+ C(t)=s^2-\frac{1-q}{6}s^4
+ +\frac{(1-q)^2(3q+5)}{180}s^6+O(s^8).
+ \label{eq:series}
+\end{equation}
+これはコードでは有限行列の指数関数を記号的に展開して独立に検証する。
+$t^6$までの係数に$n>3$の状態は寄与しないので、有限行列で係数を厳密に求められる。
+
+\subsection{参照論文の短時間式との不一致}
+参照論文v2の式(3.39)に印刷された$t^2$係数は、
+式\eqref{eq:a}の記号では$a^2\lambda/(1-q)$である。
+式\eqref{eq:bn}と\eqref{eq:evolution}を同時に採用すると、これは
+式\eqref{eq:shortc}と一致しない。
+特に$\mathcal Q=0$、$\mathcal J=1$、$\lambda=0.001$では
+\begin{equation}
+ a^2=\frac{e^{0.001}}{0.001}=1001.000500\ldots,
+ \label{eq:shortnumber}
+\end{equation}
+一方、同論文の小さい$\lambda$での式(3.43)の係数は$1/(4\lambda)=250$となる。
+前者と後者の比は$4.004002\ldots$であり、$\lambda\to0$でも比は$4$に近づく。
+単なる高次補正ではない。
+
+ここでの結論は、当該版の表示式同士が、同じ時間と同じ$\mathcal J$の規約では整合しないということに限る。
+論文の図の生成コードや別の規約を確認したわけではない。
+本計算は式(3.33),(3.34)を入力として固定し、短時間係数をその定義から決める。
+
+\section{$\log\cosh$近似はどこまで成立するか}
+\subsection{係数を整合させた候補}
+$t^2$項と$t^4$項を同時に再現する関数として
+\begin{equation}
+ C_{\rm match}(t)=\frac{2}{1-q}
+ \log\cosh\bigl(a\sqrt{1-q}\,t\bigr)
+ \label{eq:matched}
+\end{equation}
+を考える。添字$\mathrm{match}$はこの二つのTaylor係数を一致させたことを表し、
+最小二乗fitによって求めた関数ではない。
+式\eqref{eq:series}と比較すると
+\begin{equation}
+ C(t)-C_{\rm match}(t)
+ =-\frac{(1-q)^3}{60}(at)^6+O((at)^8).
+ \label{eq:sixth}
+\end{equation}
+したがって、$0<q<1$において式\eqref{eq:matched}は厳密解ではない。
+係数が自由な一般の$A\log\cosh(Bt)$も、$t^2,t^4$を一致させると
+式\eqref{eq:matched}に固定されるので、同じ$t^6$の不一致が残る。
+
+\subsection{平均の加速度の厳密な式}
+$A$という演算子を
+\begin{equation}
+ A\ket n=\sqrt{[n]_q}\ket{n-1},\qquad
+ A^\dagger\ket n=\sqrt{[n+1]_q}\ket{n+1}
+ \label{eq:ladder}
+\end{equation}
+で定義し、基底番号演算子を$\hat n\ket n=n\ket n$とする。
+すると$H_{\rm K}=a(A+A^\dagger)$、$[A,A^\dagger]=q^{\hat n}$であり、
+Heisenberg方程式から
+\begin{equation}
+ \ddot C=-\avg{[H_{\rm K},[H_{\rm K},\hat n]]}
+ =2a^2\avg{q^{\hat n}}
+ =2a^2\sum_n q^nP_n(t)
+ \label{eq:acceleration}
+\end{equation}
+を得る。期待値は式\eqref{eq:state}の状態で取る。
+右辺は正なので、$C(0)=\dot C(0)=0$から$C(t)$は$t>0$で増加する。
+ただし平均が増加しても、各累積確率が単調になるとは限らない。
+
+\subsection{厳密な下界としての$\log\cosh$}
+$\epsilon=-\log q>0$と定義する。関数$e^{-\epsilon n}$は凸なので、
+平均の関数と関数の平均を比較するJensenの不等式から
+\begin{equation}
+ \avg{e^{-\epsilon\hat n}}\geq e^{-\epsilon C},\qquad
+ \ddot C\geq2a^2e^{-\epsilon C}.
+ \label{eq:jensen}
+\end{equation}
+$\dot C\geq0$を使って両辺に$\dot C$を掛けて積分すると
+\begin{equation}
+ \dot C^2\geq\frac{4a^2}{\epsilon}(1-e^{-\epsilon C}).
+ \label{eq:energybound}
+\end{equation}
+変数を分離して初期値$C(0)=0$を用いると、
+\begin{equation}
+ C(t)\geq C_{\rm lower}(t)
+ \equiv\frac{2}{\epsilon}\log\cosh(a\sqrt\epsilon\,t),\qquad t\geq0.
+ \label{eq:lower}
+\end{equation}
+これは無限半直線上の模型に対する下界であり、分布の幅が小さいという仮定を使っていない。
+一方、$q^n\leq1$から$C(t)\leq a^2t^2$も得られる。
+式\eqref{eq:lower}と式\eqref{eq:matched}は有限$q$では異なる。
+
+\subsection{小さい変形と既知の半古典的関数形}
+$q$が$1$に近いと$\epsilon\simeq1-q$である。
+平均の加速度で$\avg{e^{-\epsilon\hat n}}$を$e^{-\epsilon C}$に置く近似は、
+分布の揺らぎによる補正を落としている。その補正を制御できれば、
+式\eqref{eq:lower}の等号を満たす$\log\cosh$型の運動が得られる。
+
+$\lambda/(1-4\mathcal Q^2)\ll1$で、式\eqref{eq:matched}の先頭の形は
+\begin{equation}
+ C_{\rm match}(t)\simeq
+ \frac{1-4\mathcal Q^2}{2\lambda}
+ \log\cosh\left[2\mathcal J(1-4\mathcal Q^2)^{(p-1)/2}t\right].
+ \label{eq:chargedapprox}
+\end{equation}
+この式は電荷sectorごとのパラメータの代入であり、新しいbulk対応の導出ではない。
+$\log\cosh$型のKrylov complexityの成長とwormhole長の対応は、既にdouble-scaled SYKの研究に現れる\cite{Ambrosini}。
+wormhole長とは、二つの境界を結ぶ空間的な曲線の長さであり、時空の座標そのものではない。
+関数形が一致するだけでは、時間・長さ・温度の物理的な規格化は決まらない。
+
+\section{数値検証}
+\subsection{計算法と検査項目}
+整数$n$を$0\leq n\leq M$で打ち切り、式\eqref{eq:evolution}の実反対称行列を指数関数で作用させる。
+実反対称とは転置が元の行列の負になることであり、厳密演算では$\sum_n\chi_n^2$を保存する。
+実装はSciPyの\texttt{expm\_multiply}を使う。時間刻みでEuler積分する方法ではない。
+
+無次元時間と規格化した平均を
+\begin{equation}
+ x=a\sqrt{1-q}\,t,\qquad Y(x)=\frac{1-q}{2}C(t)
+ \label{eq:scaled}
+\end{equation}
+と定義する。$0\leq x\leq4$を161点で調べる。
+$C_{\rm match}$に対応する曲線は$Y=\log\cosh x$となる。
+各$q$で$M$と$2M$を比較し、終端付近の確率、確率総和、式\eqref{eq:acceleration}、
+後述のFisher計量の恒等式を検査する。
+
+打切り模型の加速度には終端の補正がある。$P_M$を終端の確率として
+\begin{equation}
+ \ddot C_M=2a^2\left(\avg{q^{\hat n}}-[M+1]_qP_M\right).
+ \label{eq:finiteboundary}
+\end{equation}
+したがって、打切り行列でも確率が保存されることだけでは、無限鎖の解への収束を保証しない。
+終端確率と$M$依存性を別に検査する必要がある。
+
+\subsection{結果}
+表\ref{tab:errors}の相対偏差は、$x>0$の160点で測った
+$\max |C/C_{\rm match}-1|$である。任意の時間までの最大誤差を意味しない。
+
+\begin{table}[htbp]
+\centering
+\caption{係数を一致させた$\log\cosh$近似の検証。打切り差は平均$C$の絶対差。
+表示上の$0$は、この実行で倍精度の出力が一致したことを表し、誤差の厳密な上限ではない。}
+\label{tab:errors}
+\input{results/table.tex}
+\end{table}
+
+最も小さい変形$q=e^{-0.004}$は、例えば$\mathcal Q=0$、$\lambda=0.001$に対応する。
+この場合、今回の時間区間での最大相対偏差は約$0.034\%$である。
+一方$q=0.2$では約$8.69\%$になる。有限$q$のずれは、式\eqref{eq:sixth}で
+解析的にも確認されており、打切り誤差だけによるものではない。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.84\linewidth]{results/complexity.pdf}
+\caption{同じ無次元時間で比較したKrylov complexity。破線はfitを行わずに
+式\eqref{eq:matched}から得た曲線である。}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.84\linewidth]{results/relative_error.pdf}
+\caption{式\eqref{eq:matched}からの相対偏差。$q\to1$で偏差が小さくなる。
+この図だけで全時間一様な収束を証明したことにはならない。}
+\end{figure}
+
+全ての実行で確率総和のずれは$10^{-14}$未満、初期点からの$W_1$と$C$の差は
+$10^{-10}$未満、Fisher計量の相対誤差と終端補正を含む加速度恒等式の規格化した誤差は
+$10^{-10}$未満であった。個々の値と使用環境は\texttt{results/summary.json}に保存する。
+
+\section{同じ分布のFisher計量}
+Fisher計量は、確率分布のパラメータを微小に変えた際の統計的識別可能性を測る計量である。
+時間$t$をパラメータとして、今回の分布族へ引き戻した計量を
+\begin{equation}
+ g^{\rm F}_{tt}(t)=\sum_{n:P_n>0}\frac{\dot P_n^2}{P_n}
+ \label{eq:fisherdef}
+\end{equation}
+と定義する。引き戻すとは、分布全体の空間の計量を、$P(t)$が描く曲線に沿って評価することである。
+$P_n=\chi_n^2$なので、零点での連続的な極限を取れば
+\begin{equation}
+ g^{\rm F}_{tt}=4\sum_n\dot\chi_n^2
+ =4\avg{H_{\rm K}^2}=4a^2.
+ \label{eq:fisherconstant}
+\end{equation}
+最後の等号では$\bra0H_{\rm K}^2\ket0=b_1^2=a^2$と、時間発展でのエネルギー二乗の保存を使った。
+厳密に$P_n=0$となる点は通常の正則な統計模型の仮定から外れるため、この式は
+周囲から連続的に延長した計量として理解する。
+
+従って、この曲線に沿ったFisherの長さは
+\begin{equation}
+ \ell_{\rm F}(0,t)=\int_0^t\sqrt{g^{\rm F}_{tt}}\,\dd t'=2at\qquad(t\geq0).
+ \label{eq:fisherlength}
+\end{equation}
+$W_1(P(t),\delta_0)=C(t)$とは異なり、初めから線形である。
+一方、分布全体の空間でのFisher--Rao最短距離は、この規格化では
+\begin{equation}
+ d_{\rm FR}(P(t),\delta_0)=2\arccos\sqrt{P_0(t)}\leq\pi.
+ \label{eq:ambientfr}
+\end{equation}
+曲線に沿う長さと、曲線の外も通れる最短距離は異なる。
+この違いを混同すると、Fisher幾何との比較から誤った一次元性や飽和を読み取ってしまう。
+
+\section{振幅の位相とBerry接続}
+\subsection{同じ状態族を位相方向へ拡張する}
+確率だけでなく振幅の位相も残すため、無次元の位相パラメータ$\varphi$を導入し、
+\begin{equation}
+ \ket{\Psi(t,\varphi)}=e^{\ii\varphi\hat n}e^{-\ii H_{\rm K}t}\ket0
+ \label{eq:phasefamily}
+\end{equation}
+を考える。Berry接続とは、規格化した状態のパラメータ変化に付随する一形式
+\begin{equation}
+ \mathcal A=\ii\bra\Psi\dd\Psi\rangle
+ \label{eq:berrydef}
+\end{equation}
+である。$\dd$はここではパラメータ空間$(t,\varphi)$での外微分であり、
+後述の時空の外微分と同一視していない。
+状態の全体位相を$e^{\ii\eta(t,\varphi)}$だけ変えると
+$\mathcal A\mapsto\mathcal A-\dd\eta$となり、曲率$\mathcal F=\dd\mathcal A$は変わらない。
+
+今回の族では$\avg{H_{\rm K}}=0$なので
+\begin{equation}
+ \mathcal A=-C(t)\dd\varphi,\qquad
+ \mathcal F=-\dot C(t)\dd t\wedge\dd\varphi.
+ \label{eq:berryresult}
+\end{equation}
+よって、平均位置とその速度がBerry接続と曲率に直接現れる。
+
+\subsection{量子計量との関係と、電磁場との区別}
+量子幾何テンソルを
+\begin{equation}
+ \mathcal T_{ij}=\bra{\partial_i\Psi}
+ (1-\ket\Psi\bra\Psi)\ket{\partial_j\Psi},\qquad
+ (\theta^1,\theta^2)=(t,\varphi)
+ \label{eq:qgt}
+\end{equation}
+と定義する。この規約では実部がFubini--Study計量、虚部の$-2$倍がBerry曲率である。
+本状態族では
+\begin{equation}
+ \dd s_{\rm FS}^2=a^2\dd t^2+\Var(n)\dd\varphi^2,
+ \qquad \Var(n)=\avg{\hat n^2}-C^2.
+ \label{eq:quantummetric}
+\end{equation}
+時間方向の量子計量は式\eqref{eq:fisherconstant}の$1/4$に一致する。
+
+しかし、式\eqref{eq:berryresult}をbulk電磁場と解釈する根拠はない。
+$\varphi$を生成している$\hat n$はKrylov基底の番号であり、
+\begin{equation}
+ [H_{\rm K},\hat n]=a(A-A^\dagger)\neq0
+ \label{eq:notcharge}
+\end{equation}
+なので保存電荷ではない。固定していた物理的電荷$\mathcal Q$とも違う。
+非零のBerry曲率が得られたことは、物理的な電磁場やその運動方程式を得たことを意味しない。
+
+例えば物理的な保存電荷を$\widehat Q$とし、$\widehat Q\ket\psi=Q_0\ket\psi$を満たす
+固定電荷状態に$e^{\ii\varphi\widehat Q}$を作用させても、全体位相しか変わらない。
+$Q_0$が固定された族における、この方向のBerry曲率は零である。
+一方、bulk電場には電荷に対応するGauss則と時空上の場の定義が必要であり、
+今回のパラメータ空間の曲率からは与えられない。
+
+\section{研究上の位置づけと残る検証}
+今回確かめたのは、固定した有効Hamiltonianに対する短時間係数、有限$q$での
+$\log\cosh$近似の誤差、輸送距離の恒等式とその限界、同じ状態族のFisher/Berry幾何である。
+これらの結果を、新しいcomplex SYKのbulk dualが見つかったという主張に拡張しない。
+特に、$\log\cosh$という関数形自体は既知の半古典的Krylov計算に含まれており\cite{Ambrosini}、
+新規性の根拠にはならない。
+
+次の物理的比較には、初期状態、温度、片側または両側の時間発展、長さの規格化を揃える必要がある。
+Green関数から時空を構成するGubankova--Sachdev--Tarnopolskyの方法\cite{Gubankova}との比較は、
+この対応を設定してから行う。今回の$at$を、そのまま逆温度で規格化したbulk時間と同一視しない。
+
+元の問いに近い、より直接的な次の検証は、初期点からの距離だけでなく、
+複数時刻間の距離行列を調べることである。
+式\eqref{eq:counterexample}が示すように、$W_1=C$を保ったまま直線距離からのずれが生じる。
+そのずれが$q\to1$でどのように小さくなり、確率分布の幅や量子的な戻りとどう結びつくかは、
+単に$\log\cosh$をfitするより直接的に、低次元の距離構造が成立する条件を調べる問題となる。
+
+\appendix
+\section{再実行とファイルの対応}
+全てのコマンドはリポジトリの最上位ディレクトリで実行する。
+Pythonの依存関係は\texttt{requirements.txt}に固定した。
+\begin{verbatim}
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python src/krylov.py --output results
+latexmk -lualatex -interaction=nonstopmode \
+  -halt-on-error -outdir=build notes/note.tex
+\end{verbatim}
+PDFにはLuaLaTeX、日本語組版用のLuaTeX-jaと原ノ味フォント、
+通常のLaTeX追加パッケージを使う。GitHub Actionsでは同じコマンドを実行する。
+\texttt{src/krylov.py}が時間発展、CSV、JSON、図、数値表を生成する。
+\texttt{tests/test\_krylov.py}には、記号計算による$t^6$までの検算、
+別の行列指数関数との比較、独立の輸送距離実装との比較などを含む。
+
+\begin{thebibliography}{9}
+\bibitem{HashimotoTanahashi}
+K.~Hashimoto and N.~Tanahashi,
+\emph{Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity},
+\href{https://arxiv.org/abs/2604.17649}{arXiv:2604.17649}.
+\bibitem{Forste}
+S.~F\"orste, Y.~Kruse and S.~Natu,
+\emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model},
+\href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2}.
+入力は式(3.33),(3.34)。比較した短時間式は(3.39),(3.43)。
+\bibitem{Ambrosini}
+M.~Ambrosini, E.~Rabinovici, A.~S\'anchez-Garrido, R.~Shir and J.~Sonner,
+\emph{Operator K-complexity in DSSYK: Krylov complexity equals bulk length},
+\href{https://arxiv.org/abs/2412.15318v2}{arXiv:2412.15318v2}, 特に第2.2節。
+\bibitem{Gubankova}
+E.~Gubankova, S.~Sachdev and G.~Tarnopolsky,
+\emph{Scaling limits of complex Sachdev-Ye-Kitaev models and holographic geometry},
+\href{https://arxiv.org/abs/2512.05294v2}{arXiv:2512.05294v2}.
+\end{thebibliography}
+\end{document}
