@@ -33,19 +33,24 @@ jobs:
       - name: Run independent checks
         run: python -m unittest discover -s tests -v
       - name: Recompute figures and numerical results
-        run: python src/krylov.py --output results
+        run: |
+          python src/krylov.py --output results
+          python src/geodesic.py --output results/geodesic
       - name: Install LuaLaTeX and Japanese typesetting
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends latexmk texlive-luatex texlive-lang-japanese texlive-latex-extra
       - name: Compile research note
-        run: latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/note.tex
+        run: |
+          latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/note.tex
+          latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/geodesic.tex
       - name: Upload PDF and verification results
         uses: actions/upload-artifact@v4
         with:
           name: research-note-and-verification
           path: |
             build/note.pdf
+            build/geodesic.pdf
             results/
           if-no-files-found: error
           retention-days: 90
@@ -60,9 +65,10 @@ jobs:
           fi
           mkdir -p docs
           cp build/note.pdf docs/note.pdf
+          cp build/geodesic.pdf docs/geodesic.pdf
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/note.pdf results/
+          git add docs/note.pdf docs/geodesic.pdf results/
           if ! git diff --cached --quiet; then
             git commit -m 'Build research note and refresh verification results'
             git push origin HEAD:main

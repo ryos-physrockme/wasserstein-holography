@@ -1,0 +1,467 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,booktabs,graphicx}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\avg}[1]{\langle#1\rangle}
+\title{有限温度のchord確率分布と\\二境界間の測地線長}
+\author{研究ノート}
+\date{2026年9月15日}
+\begin{document}
+\maketitle
+\begin{abstract}
+固定電荷complex Sachdev--Ye--Kitaev模型に現れる三重対角Hamiltonianについて、
+熱状態の準備を含むchord数の期待値を計算し、二次元anti-de Sitter時空の二つの境界を結ぶ
+空間的測地線の長さと比較する。熱状態を作る前の基準状態から生成した基底を維持すること、
+量子系の温度と有効計量のHawking温度を区別することが必要である。
+測地線長は埋込み空間の内積から独立に導出し、時間尺度は熱的なスペクトルの鞍点から決める。
+時間発展の数値データへのフィットは用いない。
+有限変形の量子計算は半古典式へ近づくが、同じ微視的温度を代入したJackiw--Teitelboim重力の式には、
+さらに低温極限を取らないと一致しない。
+この長さの対応は既存のsine dilaton gravityの結果を再現するものであり、
+Wasserstein距離だけから重力理論や電磁場を新しく導出したものではない。
+\end{abstract}
+\tableofcontents
+
+\section{対象と比較の範囲}
+ホログラフィーとは、重力を含む理論と、それより低い次元の量子系を対応づける枠組みである。
+重力側の時空をbulk、量子系の側をboundaryと呼ぶ。
+本稿で計算する重力側の量は、bulkの二つの境界を結ぶ空間的測地線の長さである。
+測地線とは、計量で定めた長さを局所的に停留させる曲線をいう。
+動径座標そのものとは区別する。
+
+量子側では、complex Sachdev--Ye--Kitaev模型、以下complex SYK模型に現れる補助的なHamiltonianを扱う。
+complex SYK模型は、多数の複素フェルミオンをランダムな多体相互作用で結合した量子力学模型であり、
+粒子数に対応する保存電荷を持つ。電荷を固定したHilbert空間の部分空間を、固定電荷sectorと呼ぶ。
+乱数平均されたHamiltonianのモーメントは、対になった相互作用の挿入を線で結ぶ図によって計算できる。
+その線をchordと呼び、途中で切った図の開いたchord数を非負整数$n$で数える。
+$n$はまず補助Hilbert空間の基底ラベルであり、時空の座標ではない\cite{Forste}。
+
+Hashimoto--Tanahashiは、選んだ状態を確率分布で表し、その輸送距離を重力側の量と結びつける構成を提案した\cite{Hashimoto}。
+本稿はHusimi $Q$分布ではなく、chord基底で測定する離散確率を使う。
+したがって、元のHusimi分布の構成をそのまま再現する計算ではない。
+
+比較の直接の先行研究はHeller--Papalini--Schuhmannである\cite{Heller}。
+同論文は、double-scaled SYKのchord数とsine dilaton gravityの長さの対応を、有限温度を含めて示している。
+sine dilaton gravityは、二次元の計量とスカラー場であるdilatonを持ち、dilatonのポテンシャルが正弦関数となる重力理論である。
+同論文の長さは、dilatonに非最小結合したスカラー場の伝播を支配する\emph{有効計量}で測る。
+これは元の重力作用の計量と無条件に同じではない。
+本稿はこの既存対応を検算し、固定電荷で得られる同じ形式のHamiltonianにどこまで使えるかを切り分ける。
+
+\section{Hamiltonian、基準状態、熱的準備}
+\subsection{三重対角Hamiltonianと尺度}
+規格化された補助基底を$\ket n$、$n=0,1,\ldots$とする。
+計算の入力は
+\begin{equation}
+ H_{\rm K}\ket n=b_{n+1}\ket{n+1}+b_n\ket{n-1},\qquad
+ b_n=a\sqrt{\frac{1-q^n}{1-q}},\qquad b_0=0
+ \label{eq:ham}
+\end{equation}
+である。$0<q<1$は無次元の変形パラメータ、$a=b_1>0$はエネルギー尺度である。
+$\hbar=k_{\rm B}=1$とする。
+以下の三つの量を定義する。
+\begin{equation}
+ \epsilon=-\log q,\qquad B=\frac{a}{\sqrt{1-q}},\qquad
+ \Omega=\epsilon B.
+ \label{eq:scales}
+\end{equation}
+$\epsilon$は無次元、$B$は大きい$n$での隣接結合$b_n$の極限、$\Omega$は時間を無次元化するエネルギー尺度である。
+$n\to\infty$で$b_n\to B$となるため、無限鎖のスペクトルは$[-2B,2B]$にある。
+
+基準状態$\ket0$に$H_{\rm K}$を繰り返し作用させ、得られるベクトルを直交化するとKrylov基底が得られる。
+式\eqref{eq:ham}ではそれが$\ket n$に一致する。
+熱状態を準備した後で基底を作り直す操作は、本稿では行わない。
+
+\subsection{有限温度で何を時間発展させるか}
+逆温度を$\beta=1/T\geq0$とする。熱的な重みを持つ状態とその実時間発展を
+\begin{align}
+ Z_\beta&=\bra0 e^{-\beta H_{\rm K}}\ket0,\\
+ \ket{\psi_\beta(t)}&=Z_\beta^{-1/2}
+ e^{-\ii tH_{\rm K}}e^{-\beta H_{\rm K}/2}\ket0
+ \label{eq:thermal}
+\end{align}
+と定義する。$e^{-\beta H/2}$はエネルギーの大きい成分を抑えるEuclidean時間発展であり、
+ここでは熱的準備と呼ぶ。$Z_\beta$は補助空間全体の$\operatorname{Tr}e^{-\beta H_{\rm K}}$ではない。
+chordによるモーメント対応のもとで、微視的模型の規格化された熱的トレースに対応する量である\cite{Heller,Forste}。
+
+$\beta=0$では$\ket{\psi_0(0)}=\ket0$であり、微視的模型の無限温度に対応する。
+これは$T=0$ではない。$q\to1$だけを取る操作と、低温でスペクトルの下端を選ぶ操作も別である。
+低エネルギー重力への極限でこの区別が必要なことは、既存研究でも明記されている\cite{Heller,Rabinovici}。
+
+二つの同一量子系のエネルギー固有状態を$\ket E_L,\ket E_R$とすると、
+熱状態を純粋状態で表す一つの方法は$\sum_E e^{-\beta E/2}\ket E_L\ket E_R$を規格化することである。
+この状態をthermofield doubleと呼ぶ。左右の未来向き時間を$t_L,t_R$とすると、
+各項の位相は$e^{-\ii E(t_L+t_R)}$である。
+本稿は補助空間の時間$t$を、この\emph{和}$t=t_L+t_R$と比較する。
+左右それぞれを同じ時間$t_b$だけ進める場合は$t=2t_b$であり、係数2を落としてはならない。
+
+\subsection{確率分布と長さの候補}
+測定確率と平均chord数を
+\begin{equation}
+ P_{\beta,n}(t)=|\bra n\psi_\beta(t)\rangle|^2,\qquad
+ N_\beta(t)=\sum_{n\geq0}nP_{\beta,n}(t)
+ \label{eq:prob}
+\end{equation}
+と定義する。無次元の長さの候補と、その増加分を
+\begin{equation}
+ \ell_\beta(t)=\epsilon N_\beta(t),\qquad
+ \delta\ell_\beta(t)=\ell_\beta(t)-\ell_\beta(0)
+ \label{eq:lengthobs}
+\end{equation}
+とする。係数$\epsilon$はフィットで選ぶのではなく、既存の長さ演算子の対応から採用する\cite{Heller}。
+参照論文の変形パラメータをここだけ$q_{\rm H}$と書くと、
+同論文の隣接係数は$\sqrt{1-q_{\rm H}^{2n}}$に比例する。
+従って本稿との対応は$q=q_{\rm H}^2$であり、
+同論文の$2|\log q_{\rm H}|\,n$は本稿の$\epsilon n$となる。
+この規約をそろえないと長さに係数2の誤りが入る。
+
+\section{二境界間の測地線長を独立に求める}
+\subsection{計量とHawking温度}
+二次元anti-de Sitter時空をAdS$_2$と略記する。
+曲率半径を$L_2>0$、地平面の動径位置を$r_h>0$として、
+\begin{equation}
+ \dd s^2=-\frac{r^2-r_h^2}{L_2^2}\dd t_R^2
+ +\frac{L_2^2}{r^2-r_h^2}\dd r^2
+ \label{eq:metric}
+\end{equation}
+を考える。計量の符号は$(-,+)$である。
+$r>r_h$は右側の外部領域であり、最大拡張にはもう一つの外部領域がある。
+曲率スカラーは$-2/L_2^2$である。
+
+$r=r_h+\delta r$の近くで$t_R=-\ii\tau$とし、
+$\delta r=r_h\rho^2/(2L_2^2)$と置くと、Euclidean計量は
+\begin{equation}
+ \dd s_E^2=\dd\rho^2+\kappa^2\rho^2\dd\tau^2+O(\rho^4),\qquad
+ \kappa=\frac{r_h}{L_2^2}.
+\end{equation}
+原点を円錐特異点にしないためには$\tau$の周期は$2\pi/\kappa$である。
+従ってこの計量のHawking温度は
+\begin{equation}
+ T_{\rm BH}=\frac{\kappa}{2\pi}.
+ \label{eq:tbh}
+\end{equation}
+$T_{\rm BH}$と量子系の$T=1/\beta$は、この段階では同一視しない。
+
+\subsection{埋込み空間による測地線計算}
+AdS$_2$を三次元の平坦な補助空間に
+\begin{equation}
+ -(X^{-1})^2-(X^0)^2+(X^1)^2=-L_2^2
+\end{equation}
+として埋め込む。この空間の内積を$X\cdot Y=-X^{-1}Y^{-1}-X^0Y^0+X^1Y^1$と定義する。
+左右両境界を有限の$r=r_c>r_h$で切り、$A=r_c/r_h$と書くと、端点は
+\begin{align}
+ X_R&=L_2\left(A,\sqrt{A^2-1}\sinh(\kappa t_R),
+                  \sqrt{A^2-1}\cosh(\kappa t_R)\right),\\
+ X_L&=L_2\left(A,\sqrt{A^2-1}\sinh(\kappa t_L),
+                 -\sqrt{A^2-1}\cosh(\kappa t_L)\right).
+\end{align}
+これらは上の超曲面上にあり、右端点の誘導計量は式\eqref{eq:metric}を再現する。
+内積を計算すると
+\begin{equation}
+ -\frac{X_R\cdot X_L}{L_2^2}
+ =A^2+(A^2-1)\cosh\!\left(\kappa(t_L+t_R)\right).
+ \label{eq:invariant}
+\end{equation}
+空間的測地線の長さを$\mathcal L_c$とすると、
+$\cosh(\mathcal L_c/L_2)=-X_R\cdot X_L/L_2^2$である。
+この関係は、端点を張る平面と超曲面の交線を
+\begin{equation}
+ X(s)=\frac{\sinh[(\mathcal L_c-s)/L_2]}{\sinh(\mathcal L_c/L_2)}X_R
+ +\frac{\sinh(s/L_2)}{\sinh(\mathcal L_c/L_2)}X_L
+\end{equation}
+と書いて、$X'(s)\cdot X'(s)=1$、$X''(s)=X(s)/L_2^2$を確かめれば得られる。
+加速度が超曲面の法線方向だけなので、この曲線は測地線である。
+
+長さの境界発散は同じ温度で$t=0$との差を取って消す。
+\begin{align}
+ \frac{\mathcal L_c(t)-\mathcal L_c(0)}{L_2}
+ &=\operatorname{arcosh}\!\left[A^2+(A^2-1)\cosh(\kappa t)\right]
+   -\operatorname{arcosh}(2A^2-1),\\
+ \frac{\delta\mathcal L(t)}{L_2}
+ &\equiv\lim_{A\to\infty}\frac{\mathcal L_c(t)-\mathcal L_c(0)}{L_2}
+ =2\log\cosh\left(\pi T_{\rm BH}t\right).
+ \label{eq:geo}
+\end{align}
+この導出にはchord分布もKrylov complexityも使っていない。
+比較するのは無次元量$\delta\mathcal L/L_2$と式\eqref{eq:lengthobs}であり、
+この計算だけから物理単位での$L_2$を決定したわけではない。
+
+\section{熱的な鞍点が時間尺度を決める}
+\subsection{スペクトル測度と温度}
+符号が交互に変わる基底変換$U\ket n=(-1)^n\ket n$により、
+$H_-=UH_{\rm K}U^\dagger=-H_{\rm K}$となる。
+$U\ket0=\ket0$であり、各基底で測る確率はこの変換で変わらない。
+$H_-$のエネルギーを
+\begin{equation}
+ E(u)=-2B\cos u,\qquad 0<u<\pi
+\end{equation}
+と表示する。$u=0$が下端である。
+$\ket0$が与えるスペクトル測度は\cite{Heller}
+\begin{equation}
+ \dd\nu_q(u)=\frac{(q;q)_\infty}{2\pi}
+       |(e^{2\ii u};q)_\infty|^2\dd u,\qquad
+ (z;q)_\infty\equiv\prod_{m=0}^{\infty}(1-zq^m).
+ \label{eq:measure}
+\end{equation}
+最後の式は無限積の定義であり、$|q|<1$で用いる。
+式\eqref{eq:measure}の根拠は、式\eqref{eq:ham}の固有ベクトルが
+$2xH_n(x|q)=H_{n+1}(x|q)+(1-q^n)H_{n-1}(x|q)$、$H_0=1,H_{-1}=0$で定まる
+多項式の直交系になることである。
+
+小さい$\epsilon$では、無限積の対数を展開すると
+\begin{equation}
+ \log |(e^{2\ii u};e^{-\epsilon})_\infty|^2
+ =-2\sum_{k\geq1}\frac{\cos(2ku)}{k(1-e^{-\epsilon k})}
+ =-\frac{2}{\epsilon}(u-\pi/2)^2+\text{$u$に依存しない項}+O(1).
+\end{equation}
+最後に$\sum_{k\geq1}\cos(2ku)/k^2=\pi^2/6-\pi u+u^2$を用いた。
+端点から離れた$u$での先頭項を使う半古典近似である。
+従って熱的重みの対数の先頭項は
+\begin{equation}
+ -\frac{2}{\epsilon}(u-\pi/2)^2+2\beta B\cos u.
+\end{equation}
+この関数を最大にする$u=u_*$を鞍点と呼ぶ。その条件は
+\begin{equation}
+ \beta\Omega\sin u_*=\pi-2u_*.
+ \label{eq:saddle}
+\end{equation}
+無次元の量$v=1-2u_*/\pi$を導入すると
+\begin{equation}
+ \beta\Omega=\frac{\pi v}{\cos(\pi v/2)},\qquad 0\leq v<1.
+ \label{eq:v}
+\end{equation}
+$v$はフィット変数ではなく、指定した温度とHamiltonianから一意に決まる。
+
+\subsection{同じ鞍点から長さの運動を求める}
+半古典近似では$\ell=\epsilon n$を連続変数とし、共役な無次元運動量を$\eta$とする。
+Poisson括弧は$\{\ell,\eta\}=\epsilon$とする。
+$H_-$の隣接差分を連続的な位相$e^{\pm\ii\eta}$で表すと、先頭次数のHamiltonianは
+\begin{equation}
+ h(\ell,\eta)=-2B\sqrt{1-e^{-\ell}}\cos\eta.
+\end{equation}
+熱的準備の半古典鞍点を、運動量が零の折り返し点$\eta=0$、エネルギー$E(u_*)$として扱う。
+これは波束の幅を無視する近似であり、有限$\epsilon$での演算子恒等式ではない。
+エネルギー保存とHamilton方程式から
+\begin{equation}
+ \dot\ell^2=4\Omega^2(\sin^2u_*-e^{-\ell}),\qquad
+ \ell(0)=-2\log\sin u_*
+\end{equation}
+となる。初期点から外向きに進む解は
+\begin{align}
+ \ell_{\rm cl}(t)&=-2\log\sin u_*+
+             2\log\cosh(\Omega\sin u_*\,t),\\
+ \delta\ell_{\rm cl}(t)&=2\log\cosh\left(\frac{\pi v}{\beta}t\right).
+ \label{eq:classical}
+\end{align}
+$\mathrm{cl}$は半古典鞍点の値を表す。波束の広がりによる補正はこの式に含めていない。
+
+\subsection{微視的温度と有効計量の温度}
+式\eqref{eq:geo}と\eqref{eq:classical}は
+\begin{equation}
+ T_{\rm BH}=\frac{\Omega\sin u_*}{\pi}=\frac{v}{\beta}=vT
+ \label{eq:tempmap}
+\end{equation}
+のもとで一致する。
+ただし、ここまでの代数的な一致だけなら計量の温度を後から選んだとも解釈できる。
+重力側で同じ関係が独立に与えられていることが重要である。
+Heller等の有効計量\cite{Heller}では、無次元重力時間を$t_S$とすると
+\begin{equation}
+ \frac{\dd s^2_{\rm eff}}{L_2^2}
+ =-(\rho^2-\sin^2u_*)\dd t_S^2
+   +\frac{\dd\rho^2}{\rho^2-\sin^2u_*}.
+\end{equation}
+微視的逆温度と計量の逆温度は、それぞれ$(2\pi-4u_*)/\sin u_*$と$2\pi/\sin u_*$である。
+本稿の先頭次数の尺度では$t_S=2\Omega t$なので、これは式\eqref{eq:saddle}と\eqref{eq:tempmap}を再現する。
+重力理論のHilbert空間を離散長に射影する構成で、この温度の違いが現れる。
+これは一般の重力系で常に成り立つ温度関係ではなく、ここで採用する既存の双対性の一部である。
+有限$\epsilon$での演算子順序に依存する補正まで、この古典温度関係だけで決めたとは主張しない。
+
+Jackiw--Teitelboim重力、以下JT重力は、dilatonが曲率を一定に制約する二次元重力理論である。
+$\beta\Omega\gg1$では$u_*\ll1$、$v\to1$となり、微視的温度を直接用いた式
+\begin{equation}
+ \delta\ell_{\rm JT}(t)=2\log\cosh(\pi t/\beta)
+ \label{eq:jt}
+\end{equation}
+へ近づく。$\epsilon\to0$は量子補正を小さくする極限、$\beta\Omega\to\infty$は
+スペクトル下端を選ぶ極限であり、同じ操作ではない。
+例えば$\beta\Omega=10$なら$\epsilon$をいくら小さくしても$v\simeq0.8317$のままである。
+
+本稿の数値比較は$\Omega$と$\beta\Omega$を固定して$\epsilon$を小さくする。
+このとき$a=\Omega\sqrt{1-e^{-\epsilon}}/\epsilon\sim\Omega/\sqrt\epsilon$であり、
+$a$を固定して$q\to1$とする極限ではない。後者を有限の$t$で取ると、
+$b_n=a\sqrt n$の調和振動子となり、平均chord数は$(at)^2$になる。
+同じ$q\to1$という記号でも、固定する尺度と観測する時間領域を指定する必要がある。
+
+\section{行列指数関数による検証}
+\subsection{計算法と誤差の区別}
+基底を$n=0,\ldots,M$で打ち切り、式\eqref{eq:ham}を有限疎行列で表す。
+計算では$K=H_-+2B$を使ってスペクトルを非負に移す。
+エネルギーの定数シフトは規格化した確率を変えない。
+Euclidean時間発展をいくつかの区間に分け、各区間で行列指数関数を作用させて規格化する。
+これはアンダーフローを避けるためであり、各区間を微分方程式の有限刻みで近似する方法ではない。
+実時間発展後の確率には再規格化を行わない。
+
+$\Omega=1$を計算単位とし、$0\leq t/\beta\leq1$を81点で測る。
+別に$2M$の鎖を使って$t/\beta=0,1/2,1$で比較する。
+この打切り検査、確率総和、エネルギー保存の残差と、半古典近似の偏差を区別して保存する。
+加えて有限行列では独立の密行列指数関数とも比較する。
+
+表の偏差は、$t=\beta$で$[\delta\ell_\beta/\delta\ell_{\rm cl}-1]\times100$、
+および$[\delta\ell_\beta/\delta\ell_{\rm JT}-1]\times100$である。
+後者は有限温度補正と有限$\epsilon$補正の両方を含むため、純粋な量子補正とは呼ばない。
+\begin{table}[htbp]
+\centering\small
+\input{results/geodesic/table.tex}
+\caption{熱的準備を含む鎖の数値計算。$t=t_L+t_R$。
+最後の二列は数値計算の丸め誤差ではなく、指定した近似式からの偏差である。}
+\label{tab:thermal}
+\end{table}
+
+$\beta\Omega=10$では、$\epsilon=0.05$から$0.005$へ下げると、
+半古典式からの偏差は約$2.14\%$から$0.217\%$へ減少する。
+一方JT式からの偏差は約$-20\%$のまま残る。
+$\epsilon=0.005$を固定し、$\beta\Omega$を10から40へ増やすと、
+JT式からの差は約$-21\%$から$-5.31\%$へ小さくなる。
+ただし半古典式に対する有限$\epsilon$補正は、同時にやや増える。
+二つの極限を混同すると、この傾向を誤読する。
+\begin{figure}[htbp]
+\centering\includegraphics[width=.85\textwidth]{results/geodesic/thermal_length.pdf}
+\caption{$\beta\Omega=10$での比較。破線は式\eqref{eq:classical}、点線は式\eqref{eq:jt}。
+横軸は左右の境界時間の和を逆温度で割った量である。}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=.85\textwidth]{results/geodesic/low_temperature_limit.pdf}
+\caption{変形を$\epsilon=0.005$に固定し、温度を下げる比較。
+実線は量子計算、破線は同じ温度での半古典式。}
+\end{figure}
+
+今回の8組では、$M$と$2M$での無次元長の最大差は約$1.3\times10^{-8}$以下、
+実時間の確率総和のずれは約$5.3\times10^{-10}$以下であった。
+有意な物理的偏差はこれらより十分大きい。
+測地線側でも、境界打切り$A=10,100,1000$について式\eqref{eq:geo}の極限との差を計算した。
+$0\leq T_{\rm BH}t\leq1$における最大差はそれぞれ
+$4.99\times10^{-3},4.96\times10^{-5},4.96\times10^{-7}$で、$A^{-2}$に従って減少した。
+全時間、全温度の一様誤差評価を得たという意味ではない。
+
+半古典鞍点の幅は、式\eqref{eq:saddle}の近くで
+$\operatorname{Var}(u)\simeq\epsilon/(4+2\beta\Omega\cos u_*)$となる。
+低温でも幅を鞍点位置より小さく保つための目安は$\epsilon\beta\Omega\ll1$である。
+従って古典JTとの重なりを調べる領域は概ね
+$1\ll\beta\Omega\ll1/\epsilon$であり、有限$\epsilon$のまま$T\to0$とする操作は別に扱う必要がある。
+
+\section{固定電荷を代入した比較}
+微視的模型のフェルミオンの種類数を$N$、相互作用内の生成演算子と消滅演算子の数をそれぞれ$p$とする。
+$\lambda=p^2/N$を固定して$N,p\to\infty$とする操作がdouble-scaling limitである。
+規格化した固定電荷を$\mathcal Q\in(-1/2,1/2)$、相互作用のエネルギー尺度を$\mathcal J$とすると、
+F\"orste--Kruse--Natuのv2、式(3.33),(3.34)は\cite{Forste}
+\begin{align}
+ \epsilon_{\mathcal Q}&=\frac{4\lambda}{1-4\mathcal Q^2},\\
+ a_{\mathcal Q}&=\frac{\mathcal J(1-4\mathcal Q^2)^{p/2}}{\sqrt\lambda}
+ \exp\left[-\frac{\lambda}{2}
+ \frac{4\mathcal Q(\mathcal Q+1)-1}{1-4\mathcal Q^2}\right],\\
+ \Omega_{\mathcal Q}&=\frac{\epsilon_{\mathcal Q}a_{\mathcal Q}}
+ {\sqrt{1-e^{-\epsilon_{\mathcal Q}}}}
+ \label{eq:charge}
+\end{align}
+を与える。従って同じ$\beta$でも、$\beta\Omega_{\mathcal Q}$は電荷sectorで異なる。
+比較のため、入力式のパラメータを$\lambda=0.002$、$p=10$、$\mathcal J=1$、$\beta\mathcal J=5$にそろえた。
+\begin{table}[htbp]
+\centering\small
+\input{results/geodesic/charge_table.tex}
+\caption{同じ微視的温度、異なる固定電荷での補助Hamiltonianの計算。
+時間をsectorごとにフィットして合わせた表ではない。}
+\label{tab:charge}
+\end{table}
+$\mathcal Q=0.4$では$\beta\Omega_{\mathcal Q}\simeq0.101$となり、
+低温JT領域には入っていない。同じ物理温度を比較する際、電荷依存の相互作用尺度を無視してはいけない。
+この有限$p$の表は、引用した有効係数をその値に代入した数値診断である。
+有限$p$の微視的SYKからの誤差や、鞍点近似の全ての補正を評価したものではない。
+
+各sectorの行列が同じ$q$-変形の形式を持つことから、長さ演算子に関する計算を移すことはできる。
+しかし、これだけで全sectorを一つの荷電重力作用に組み込めるとは限らない。
+特に、dilaton、電磁場、境界での化学ポテンシャル、重力側の時計の規格化を
+一つの作用から同時に再現したわけではない。
+Gubankova--Sachdev--TarnopolskyのGreen関数からの再構成\cite{Gubankova}との
+電荷・結合定数の完全な対応も本稿では未検証である。
+
+\section{Wasserstein距離は何を追加したか}
+整数$n,m$の間で確率を運ぶコストを$|n-m|$とする。
+二つの分布$P,R$について、輸送量$\pi_{nm}\geq0$が
+$\sum_m\pi_{nm}=P_n$、$\sum_n\pi_{nm}=R_m$を満たすとき、
+1-Wasserstein距離は$W_1(P,R)=\inf_\pi\sum_{n,m}|n-m|\pi_{nm}$である。
+全確率が$0$にある分布を$\delta_0$とすると、定義から
+\begin{equation}
+ \epsilon W_1(P_\beta(t),\delta_0)=\epsilon\sum_n nP_{\beta,n}(t)=\ell_\beta(t).
+ \label{eq:wtolength}
+\end{equation}
+ただし$\beta>0$では$P_\beta(0)\ne\delta_0$である。
+従って有限温度の長さは、物理的な実時間初期状態からの輸送距離ではなく、
+\emph{熱的準備前の基準点からの距離}に対応する。
+
+この区別は厳密な式でも確認できる。
+$F_{\beta,k}(t)=\sum_{n=0}^kP_{\beta,n}(t)$と定義すると、平均が増える二時刻について
+\begin{multline}
+ W_1(P_\beta(t_1),P_\beta(t_2))-[N_\beta(t_2)-N_\beta(t_1)]\\
+ =2\sum_{k\geq0}\max\{F_{\beta,k}(t_2)-F_{\beta,k}(t_1),0\}.
+\end{multline}
+右辺が零となる順序条件が別途必要である。
+熱的準備後を基準状態としてKrylov基底を作り直すと、
+最初の状態がその新基底の番号0になるが、長さ演算子は一般には$\epsilon$掛けの新基底番号ではなくなる。
+この点は有限温度の長さ対応の先行研究でも強調されている\cite{Heller}。
+
+\section{結論と再現方法}
+時間発展の数値データにフィットせず、熱的スペクトルの鞍点から予測した時間尺度で、
+chord数の期待値が有効AdS$_2$計量の測地線長へ近づくことを確認した。
+一方、微視的温度を直接代入したJT式との比較には、さらに低エネルギーの極限が必要である。
+この対応はHeller等が既に確立した枠組みの再現であり、新しい双対性の発見としては扱わない。
+
+式\eqref{eq:wtolength}により、長さの期待値をWasserstein距離として表せる。
+しかし重力的な内容を与える入力は、chord数と長さ演算子の対応、基準状態、熱的準備、
+有効計量と温度の対応である。これらは$W_1$の定義だけからは出てこない。
+特定の距離が一次元に近いことから、電磁場や重力作用が一意に決まるという主張も導いていない。
+
+本稿は独立した追補として\texttt{notes/geodesic.tex}に置き、
+以前の距離行列の研究ノート\texttt{notes/note.tex}は保持する。
+実装は\texttt{src/geodesic.py}、独立検査は\texttt{tests/test\_geodesic.py}、
+図と数値結果は\texttt{results/geodesic/}にある。
+リポジトリの最上位から以下を実行する。
+\begin{verbatim}
+python -m unittest discover -s tests -v
+OPENBLAS_NUM_THREADS=1 python src/geodesic.py \
+  --output results/geodesic
+latexmk -lualatex -interaction=nonstopmode -halt-on-error \
+  -outdir=build notes/geodesic.tex
+\end{verbatim}
+GitHub Actionsは二つのノートをそれぞれコンパイルする。
+以前のノートは\path{docs/note.pdf}、本稿は\path{docs/geodesic.pdf}に保存する。
+
+\begin{thebibliography}{9}
+\bibitem{Hashimoto}
+K. Hashimoto and N. Tanahashi,
+\emph{Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity},
+\href{https://arxiv.org/abs/2604.17649}{arXiv:2604.17649}.
+\bibitem{Forste}
+S. F\"orste, Y. Kruse and S. Natu,
+\emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model},
+\href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2}.
+本稿の入力は式(3.33),(3.34)。
+\bibitem{Heller}
+M. P. Heller, J. Papalini and T. Schuhmann,
+\emph{Krylov spread complexity as holographic complexity beyond JT gravity},
+\href{https://arxiv.org/abs/2412.17785v2}{arXiv:2412.17785v2}.
+特に式(3)--(8),(12)--(15)とSupplemental Materialを参照。
+\bibitem{Rabinovici}
+E. Rabinovici, A. S\'anchez-Garrido, R. Shir and J. Sonner,
+\emph{A bulk manifestation of Krylov complexity},
+\href{https://arxiv.org/abs/2305.04355v2}{arXiv:2305.04355v2}.
+\bibitem{Gubankova}
+E. Gubankova, S. Sachdev and G. Tarnopolsky,
+\emph{Scaling limits of complex Sachdev-Ye-Kitaev models and holographic geometry},
+\href{https://arxiv.org/abs/2512.05294v2}{arXiv:2512.05294v2}.
+\end{thebibliography}
+\end{document}

@@ -1,61 +1,58 @@
 # Wasserstein holography: research notes and verification code
 
-確率分布の輸送距離、情報幾何、量子状態の幾何が、ホログラフィーにおいて何を決めるかを検討する作業用リポジトリです。
+確率分布の輸送距離、情報幾何、量子状態の幾何が、ホログラフィーにおいて何を決めるかを検討するリポジトリです。入力式、厳密な恒等式、近似、数値結果、未検証の重力的解釈を区別します。
 
 ## 研究ノート
 
-- 日本語PDF: [docs/note.pdf](docs/note.pdf)
-- LaTeX: [notes/note.tex](notes/note.tex)
-- 自動計算・PDF生成: [GitHub Actions](https://github.com/ryos-physrockme/wasserstein-holography/actions)
+- 距離行列・確率流・Fisher計量・Berry曲率：[日本語PDF](docs/note.pdf)、[LaTeX](notes/note.tex)。
+- 有限温度のchord分布と二境界間の測地線長：[追補PDF](docs/geodesic.pdf)、[LaTeX](notes/geodesic.tex)。
+- [自動検証とPDF生成の実行履歴](https://github.com/ryos-physrockme/wasserstein-holography/actions)。
 
-PDFと `results/` は、ソース更新時にGitHub Actionsで生成・保存します。初回のビルドが終わるまではPDFのリンク先は存在しません。各実行の成果物にもPDF・図・CSV・検証結果を保存します。
+追補も独立して読めるように定義と規約を記載しています。以前の研究ノートは保持しています。ソース更新時にGitHub Actionsがテスト、数値再計算、両PDFのコンパイルを行い、`docs/`と`results/`を更新します。最新のビルドが未完了の場合、PDF・結果の更新はソースより遅れます。
 
-## 現在検証している問題
+## 有限温度での比較
 
-固定電荷complex Sachdev–Ye–Kitaev模型の有効三重対角Hamiltonianについて、Krylov基底上の確率分布を計算します。入力は Stefan Förste, Yannic Kruse, Saurabh Natu, *Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model*, [arXiv:2512.07715v2](https://arxiv.org/abs/2512.07715v2), Eqs. (3.33), (3.34) です。
+入力する隣接係数は `b_n=a sqrt((1-q^n)/(1-q))` です。`epsilon=-log(q)`、`B=a/sqrt(1-q)`、`Omega=epsilon B` と定義します。逆温度betaの状態は、ゼロchord状態から `exp(-beta H/2)` で準備してから実時間発展させます。基底は準備前のゼロchord基準で固定し、熱的準備後にLanczos計算をやり直しません。
 
-`a=b_1`、`0<q<1` として、実装する係数は
+無次元長 `ell_beta(t)=epsilon sum_n n P_beta,n(t)` の増加分を、AdS2（二次元anti-de Sitter時空）の二つの境界を結ぶ測地線長と比較します。時間は左右の未来向き境界時間の和 `t=t_L+t_R` です。
 
-```text
-b_n = a sqrt((1-q^n)/(1-q)), n >= 1.
-```
+先頭次数の熱的鞍点は `beta Omega sin(u)=pi-2u`、`v=1-2u/pi` で決まり、長さの増加は `2 log cosh(pi v t/beta)` です。vは時間データへのフィットではありません。微視的温度Tと、有効計量のHawking温度vTを区別します。低温でvが1に近づいたとき、同じ微視的温度のJackiw–Teitelboim重力の式に近づきます。小さいepsilonの極限と低温極限は別です。
 
-時間発展の初期状態は基底番号0です。測定結果nの確率をP_n(t)、その平均をC(t)とします。
+これはHeller–Papalini–Schuhmannの既存の長さ対応を再現する検証です。固定電荷ごとに同じ形式のHamiltonianを代入する計算は行いますが、全電荷sectorを一つの荷電重力作用に組み込んだり、電磁場を導出したりしたわけではありません。
 
-確認済みの内容は以下です。
+## 以前の距離幾何の検証
 
-1. 輸送コストを |n-m| とすれば、初期分布delta_0からのW_1はCに厳密に等しい。ただし、二時刻間の距離は一般に平均の差より大きい。
-2. 累積確率 `F_k(t)=sum_{n<=k} P_n(t)` とKrylov番号方向の確率流 `J_k=2 b_{k+1} chi_k chi_{k+1}` は `dF_k/dt=-J_k` を満たす。全リンクの流れが外向きなら、時刻順の分布は一次確率優越の順序にあり、任意の二時刻で `W_1=|C(t_2)-C(t_1)|` となる。
-3. `q=1` 極限では `b_n=a sqrt(n)` となり、`P_n(t)` は平均 `(a t)^2` のPoisson分布である。この極限では距離行列は厳密な1次元直線距離になる。有限qでは内向き確率流が生じて厳密性は破れるが、qが1に近い有限時間窓ではずれは非常に小さい。
-4. 入力した漸化式から `C(t)=a^2 t^2+O(t^4)` が従う。参照論文v2のEqs. (3.39), (3.43)に印刷された短時間係数とは整合しない。微視的模型から入力式までの全導出や、著者の図の生成コードを検証したという意味ではない。
-5. `2/(1-q) log cosh(a sqrt(1-q) t)` はt^2,t^4係数を再現するが、t^6で厳密解と異なる。小さい変形では良い近似になる。平均の加速度について `C''=2 a^2 <q^n>` が成り立ち、Jensenの不等式からlog-cosh型の下界が得られる。
-6. 同じ分布族の時間方向のFisher計量は、確率の零点を連続的に扱えば `g_tt=4a^2`。Krylov基底番号を生成子とする位相方向のBerry曲率も計算するが、その番号は保存電荷ではなく、曲率をbulk電磁場とは同一視しない。
+初期分布delta_0と整数間のコスト|n-m|を使うと、`W_1(P(t),delta_0)=sum_n n P_n(t)` は恒等式です。しかし任意の二時刻間の距離は平均の差より大きいことがあります。累積確率 `F_k=sum_{n<=k}P_n` と確率流 `J_k=2 b_{k+1} chi_k chi_{k+1}` は `dF_k/dt=-J_k` を満たし、分布の順序条件が直線距離への等長埋込みを決めます。
 
-これは再現計算と近似の検証です。log-cosh型の半古典的Krylov成長は既知であり、関数形だけを新規性として扱いません。Green関数からのbulk再構成との定量的な対応は未検証です。ノートに定義、導出、限定条件、原典を記載しています。
+q=1をa固定で取るとPoisson分布となり、時刻順の直線性は厳密です。有限qでは厳密性が破れる例があり、距離行列の固有値解析と全時刻対の比較を実装しています。入力係数からの短時間展開、log-cosh近似のt^6でのずれ、Fisher計量とBerry曲率も元のノートで検証します。
 
 ## 再実行
 
-Python 3.12とLuaLaTeXを使用します。リポジトリの最上位で実行してください。
+Python 3.12とLuaLaTeXを使い、リポジトリ最上位で実行します。
 
 ```bash
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 OPENBLAS_NUM_THREADS=1 python src/krylov.py --output results
+OPENBLAS_NUM_THREADS=1 python src/geodesic.py --output results/geodesic
 latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/note.tex
+latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/geodesic.tex
 ```
 
-UbuntuではPDF用に `latexmk texlive-luatex texlive-lang-japanese texlive-latex-extra` を導入します。フォントファイルはリポジトリに同梱しません。
+UbuntuではPDF用に `latexmk texlive-luatex texlive-lang-japanese texlive-latex-extra` を導入します。フォントは同梱しません。
 
-## ファイル
-
-`src/krylov.py` は入力係数、疎行列指数関数による時間発展、輸送距離・計量の検査、図と数値表の生成を担当します。`tests/test_krylov.py` には記号計算によるt^6までの検算、別の行列指数関数実装との比較、独立の輸送距離実装との比較などを含みます。
-
-`results/summary.json` は実行環境、打切り依存性、確率総和、恒等式の残差、近似の誤差に加えて、全時刻対のWasserstein距離行列、一次元直線距離からの偏差、classical multidimensional scalingの固有値、内向き確率流の診断を保存します。`results/geometry_scan.csv` はqごとの距離偏差を、`results/curves.csv` は `x=a sqrt(1-q) t` に対する `(1-q)C/2` を保存します。
+`src/krylov.py`と`tests/test_krylov.py`はゼロchord初期状態と距離幾何、`src/geodesic.py`と`tests/test_geodesic.py`は熱的準備と測地線の比較を担当します。後者は独立の密行列指数関数、境界の時計、埋込み空間の内積、鎖の打切り、確率総和・エネルギー保存を検査します。`results/geodesic/summary.json`に実行環境と誤差を、`thermal_scan.csv`に数値表を保存します。
 
 ## 関連原典
 
-Koji Hashimoto, Norihiro Tanahashi, *Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity*, [arXiv:2604.17649](https://arxiv.org/abs/2604.17649).
+Stefan Förste, Yannic Kruse, Saurabh Natu, *Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model*, [arXiv:2512.07715v2](https://arxiv.org/abs/2512.07715v2)。入力は式(3.33),(3.34)。
 
-M. Ambrosini, E. Rabinovici, A. Sánchez-Garrido, R. Shir, J. Sonner, *Operator K-complexity in DSSYK: Krylov complexity equals bulk length*, [arXiv:2412.15318v2](https://arxiv.org/abs/2412.15318v2).
+Michał P. Heller, Jacopo Papalini, Tim Schuhmann, *Krylov spread complexity as holographic complexity beyond JT gravity*, [arXiv:2412.17785v2](https://arxiv.org/abs/2412.17785v2)。有限温度、基準状態、長さ演算子、有効計量との対応。
 
-Elena Gubankova, Subir Sachdev, Grigory Tarnopolsky, *Scaling limits of complex Sachdev-Ye-Kitaev models and holographic geometry*, [arXiv:2512.05294v2](https://arxiv.org/abs/2512.05294v2).
+Koji Hashimoto, Norihiro Tanahashi, *Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity*, [arXiv:2604.17649](https://arxiv.org/abs/2604.17649)。
+
+Eliezer Rabinovici, Adrián Sánchez-Garrido, Ruth Shir, Julian Sonner, *A bulk manifestation of Krylov complexity*, [arXiv:2305.04355v2](https://arxiv.org/abs/2305.04355v2)。
+
+M. Ambrosini, E. Rabinovici, A. Sánchez-Garrido, R. Shir, J. Sonner, *Operator K-complexity in DSSYK: Krylov complexity equals bulk length*, [arXiv:2412.15318v2](https://arxiv.org/abs/2412.15318v2)。
+
+Elena Gubankova, Subir Sachdev, Grigory Tarnopolsky, *Scaling limits of complex Sachdev-Ye-Kitaev models and holographic geometry*, [arXiv:2512.05294v2](https://arxiv.org/abs/2512.05294v2)。このGreen関数からの再構成との完全な電荷・結合定数の照合は未検証です。
