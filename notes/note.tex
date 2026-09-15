@@ -21,7 +21,10 @@ Krylov complexity、1-Wasserstein距離、Fisher計量、Berry曲率を同じ状
 入力とするLanczos係数から短時間展開を独立に求めると、参照論文の短時間近似との係数の不一致が見つかる。
 係数を整合させた$\log\cosh$関数は小さい変形では良い近似になるが、有限の変形では$t^6$項で厳密解と異なる。
 また、初期点からのWasserstein距離が平均Krylov位置に等しいことは、任意の二時刻間の距離がその平均の差になることを意味しない。
-研究上の位置づけは再現計算と近似の検証であり、bulk時空や電磁場を新たに導出したと主張するものではない。
+本稿ではこの差を全時刻対について調べ、Krylov番号方向の確率流が常に外向きであることと、状態列が1-Wasserstein距離で実数直線に等長に埋め込めることが直接結びつくことを示す。
+$q=1$極限では分布はPoisson分布となり直線性は厳密であるが、有限$q$では内向き確率流によって厳密な直線性が破れる。
+ただし、double-scaling limitで典型的な$q\simeq1$では、今回調べた有限時間区間の距離行列は数値的に極めて1次元に近い。
+研究上の位置づけは再現計算と距離幾何の検証であり、bulk時空や電磁場を新たに導出したと主張するものではない。
 \end{abstract}
 \tableofcontents
 
@@ -158,6 +161,212 @@ $[n]_q$は式\eqref{eq:bn}で定義した数である。特に$a=b_1$である�
 初期点近くへ戻る確率が存在する。この例は、式\eqref{eq:w1equalsc}だけを根拠に
 状態列全体が実数直線に等長に埋め込めると結論してはいけないことを示す。
 これはHusimi分布による元の構成への反例ではなく、今回のKrylov分布に対する区別である。
+
+\section{距離行列の一次元性とKrylov番号方向の確率流}
+\subsection{累積確率と確率流}
+前節の単発の反例を、時間発展全体に対する判定条件へ拡張する。
+時刻$t$にKrylov番号が$k$以下である累積確率を
+\begin{equation}
+ F_k(t)=\sum_{n=0}^{k}P_n(t),\qquad k=0,1,2,\ldots
+ \label{eq:cdf-time}
+\end{equation}
+と定義する。ここで$k$は確率分布を区切る整数であり、時空座標ではない。
+式\eqref{eq:evolution}を用いると、隣接するKrylov基底$\ket{k}$と$\ket{k+1}$の間を
+大きいKrylov番号の向きへ流れる確率流を
+\begin{equation}
+ J_k(t)=2b_{k+1}\chi_k(t)\chi_{k+1}(t)
+ \label{eq:current}
+\end{equation}
+と置くことができる。これは実空間の粒子流ではなく、Krylov基底の整数ラベル上の確率流である。
+$J_{-1}=0$と定めると、確率の時間微分は
+\begin{equation}
+ \dot P_n=J_{n-1}-J_n
+ \label{eq:continuity}
+\end{equation}
+という離散的な連続の式を満たす。式\eqref{eq:continuity}を$n=0$から$k$まで足すと中間の項が消え、
+\begin{equation}
+ \boxed{\dot F_k(t)=-J_k(t)}
+ \label{eq:cdf-current}
+\end{equation}
+を得る。
+
+$J_k(t)>0$なら、確率はリンク$k\to k+1$を外向きに流れ、$F_k$は減少する。
+逆に$J_k(t)<0$なら、確率の一部が小さいKrylov番号へ戻り、$F_k$は増加する。
+以下では後者を\emph{内向き確率流}と呼ぶ。この語は式\eqref{eq:current}で定義した符号を指すだけであり、
+bulk時空内の流れを意味しない。
+
+\subsection{確率分布が時刻順に並ぶ条件}
+二時刻$t_2>t_1$について
+\begin{equation}
+ F_k(t_1)\geq F_k(t_2)\qquad\text{for all }k
+ \label{eq:stochastic-order}
+\end{equation}
+が成り立つとき、$P(t_2)$は$P(t_1)$より大きいKrylov番号側に一次確率優越（first-order stochastic dominance）の順序にあるという。
+式\eqref{eq:cdf-current}より、ある時間区間で全ての$k$について$J_k\geq0$なら、
+その区間の分布は時刻順に式\eqref{eq:stochastic-order}を満たす。
+
+非負整数上の確率分布では平均値を
+\begin{equation}
+ C(t)=\sum_{k=0}^{\infty}\bigl[1-F_k(t)\bigr]
+ \label{eq:mean-from-cdf}
+\end{equation}
+とも書ける。したがって$t_2>t_1$に対して
+\begin{equation}
+ C(t_2)-C(t_1)=\sum_{k=0}^{\infty}\left[F_k(t_1)-F_k(t_2)\right].
+ \label{eq:mean-cdf-difference}
+\end{equation}
+一方、1-Wasserstein距離は式\eqref{eq:cdf}で絶対値を取る。
+この二式の差を取ると
+\begin{equation}
+ \boxed{
+ W_1\bigl(P(t_1),P(t_2)\bigr)-\bigl[C(t_2)-C(t_1)\bigr]
+ =2\sum_{k=0}^{\infty}
+ \left[F_k(t_2)-F_k(t_1)\right]_+
+ }
+ \label{eq:gap-backflow}
+\end{equation}
+を得る。ここで$[y]_+=\max(y,0)$である。
+式\eqref{eq:gap-backflow}は、平均値の差では表せないWasserstein距離の超過分が、
+累積確率が時刻とともに逆向きに増えた部分だけで決まることを示す。
+従って、状態列が座標$C(t)$を用いた直線距離
+\begin{equation}
+ W_1\bigl(P(t_1),P(t_2)\bigr)=|C(t_2)-C(t_1)|
+ \label{eq:line-metric}
+\end{equation}
+を厳密に満たすための十分条件は、全リンクで確率流が外向きであることである。
+今回の軌道では$C(t)$は増加するため、この条件の下では式\eqref{eq:line-metric}がそのまま成立する。
+
+図\ref{fig:cdf-crossing}は前節の$q=0.2$の例で、累積確率差が$k=0$で負になることを示す。
+この負の部分が式\eqref{eq:gap-backflow}の距離差を生む。
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.82\linewidth]{results/cdf_crossing.pdf}
+\caption{$q=0.2$、$a=1$、$t_1=2$、$t_2=2.5$における累積確率差。
+$F_{t_1}(0)-F_{t_2}(0)<0$であるため、二分布は時刻順の一次確率優越を満たさない。}
+\label{fig:cdf-crossing}
+\end{figure}
+
+\subsection{$q=1$極限では直線性が厳密になる}
+有限$q$の結果を評価する基準として、$q\to1$で式\eqref{eq:bn}を取る。
+この極限では
+\begin{equation}
+ b_n=a\sqrt n
+ \label{eq:q1-bn}
+\end{equation}
+となる。式\eqref{eq:evolution}を直接代入して確かめると、$t\geq0$で
+\begin{equation}
+ \chi_n(t)=e^{-(at)^2/2}\frac{(at)^n}{\sqrt{n!}},\qquad
+ P_n(t)=e^{-\mu(t)}\frac{\mu(t)^n}{n!},\qquad
+ \mu(t)=(at)^2
+ \label{eq:poisson}
+\end{equation}
+が厳密解である。したがって確率分布は平均$\mu$のPoisson分布になる。
+
+$t_2>t_1$なら$\mu_2>\mu_1$である。平均$\mu_1$のPoisson確率変数を$N_1$、
+平均$\mu_2-\mu_1$の独立なPoisson確率変数を$M$とすると、
+$N_2=N_1+M$は平均$\mu_2$のPoisson分布に従い、各試行で$N_2\geq N_1$である。
+従って分布は一次確率優越の順序を満たし、
+\begin{equation}
+ W_1(P(t_1),P(t_2))=\mu_2-\mu_1
+ =C(t_2)-C(t_1)
+ \label{eq:q1-line}
+\end{equation}
+が厳密に成立する。$q=1$では、時間発展で選ばれた確率分布の集合は
+1-Wasserstein距離について実数直線上の点集合と等長である。
+
+\subsection{有限$q$の距離行列を用いた数値判定}
+連続時間の軌道を有限個の時刻$t_i$で標本化し、全ての二時刻間の距離を
+\begin{equation}
+ D_{ij}=W_1(P(t_i),P(t_j))
+ \label{eq:distance-matrix}
+\end{equation}
+とする。座標$C_i=C(t_i)$による直線距離との差を一つの数で測るため、
+\begin{equation}
+ S_{\rm line}=
+ \left[
+ \frac{\sum_{i<j}\left(D_{ij}-|C_i-C_j|\right)^2}
+ {\sum_{i<j}D_{ij}^2}
+ \right]^{1/2}
+ \label{eq:line-deviation}
+\end{equation}
+を定義する。$S_{\rm line}=0$なら、標本化した全ての点対について
+座標$C$が距離を厳密に再現する。
+
+また、classical multidimensional scalingは距離行列$D$から
+\begin{equation}
+ B=-\frac12 H D^{\circ2}H,
+ \qquad H=I-\frac1{N_t}{\bm 1}{\bm 1}^{\mathsf T}
+ \label{eq:mds-gram}
+\end{equation}
+を作る。$D^{\circ2}$は各成分を二乗した行列、$N_t$は時刻点の個数である。
+$D$がEuclidean空間の距離なら$B$はGram行列になり、その正の固有値の個数が必要な埋め込み次元を与える。
+特に厳密な直線距離なら、非零の正の固有値は一つだけである。
+以下では大きい順の正の固有値を$\lambda_1^+,\lambda_2^+,\ldots$と書き、
+$\lambda_2^+/\lambda_1^+$を一次元からのずれの補助的な指標とする。
+負の固有値が出る場合は、距離行列自体が厳密なEuclidean距離ではないことを意味する。
+
+数値計算では
+\begin{equation}
+ 0\leq x=a\sqrt{1-q}\,t\leq4
+ \label{eq:geometry-window}
+\end{equation}
+を401点で等間隔に標本化した。$a=1$とし、行列の終端を十分遠くに置いて計算する。
+確率流の最初の符号反転を表示するときだけ、倍精度の丸め誤差を避けるため
+$J_k<-10^{-10}$を検出条件とした。最大内向き流そのものにはこの閾値を適用していない。
+
+\begin{table}[htbp]
+\centering
+\caption{式\eqref{eq:geometry-window}での距離行列と確率流の検証。
+相対距離偏差は式\eqref{eq:line-deviation}、最大距離差は
+$\max_{i<j}[D_{ij}-|C_i-C_j|]$、最大内向き流は$\max_{t,k}[-J_k(t)]_+$である。
+$q\simeq1$で表示値が倍精度の丸め誤差と同程度になっても、有限$q$で全時間にわたり厳密に零であることを証明したわけではない。}
+\label{tab:geometry}
+\input{results/geometry_table.tex}
+\end{table}
+
+$q=0.2$では最大距離差は約$2.42\times10^{-2}$で、点対の約$21.5\%$が
+$10^{-10}$を超える正の距離差を持つ。一方、相対距離偏差は
+$1.26\times10^{-3}$に留まり、$\lambda_2^+/\lambda_1^+\simeq4.16\times10^{-4}$である。
+したがって、厳密な直線性は破れていても、距離行列全体を見れば第一のMDS方向が圧倒的に支配的である。
+この区別は重要で、MDSで一方向が支配的であることだけから、式\eqref{eq:line-metric}の厳密性は結論できない。
+
+$q$を1へ近づけると、今回の有限時間区間では距離差と内向き確率流が急速に小さくなる。
+$q=e^{-0.004}\simeq0.996008$では、式\eqref{eq:geometry-window}内で検出された距離差は
+$5.8\times10^{-12}$程度で、内向き確率流は倍精度の丸め誤差と同程度であった。
+これに対し、解析的な$q=1$極限では式\eqref{eq:q1-line}により直線性が厳密に成立する。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.82\linewidth]{results/line_distance_deviation.pdf}
+\caption{式\eqref{eq:line-deviation}で定義した、座標$C(t)$による直線距離からの相対偏差。
+横軸の各$q$で式\eqref{eq:geometry-window}と同じ401時刻を使用した。}
+\label{fig:line-deviation}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.82\linewidth]{results/backflow_vs_q.pdf}
+\caption{同じ時間区間での最大内向きKrylov確率流$\max[-J_k]_+$。
+$q\to1$で今回の時間区間における確率の戻りが急速に抑制される。}
+\label{fig:backflow}
+\end{figure}
+
+\subsection{固定電荷sectorへの読み替え}
+式\eqref{eq:q}より、変形パラメータ$q$はdouble-scaling parameter $\lambda$と
+固定電荷sectorのラベル$\mathcal Q$から決まる。例として$\lambda=0.001$を固定すると、
+$\mathcal Q=0,0.45,0.48,0.49$に対してそれぞれ
+$q\simeq0.9960,0.9792,0.9503,0.9039$である。
+同じ$x$区間での相対距離偏差は、それぞれおよそ
+$2\times10^{-15},8.5\times10^{-13},2.3\times10^{-9},9.2\times10^{-8}$となった。
+従って小さい$\lambda$では、電荷が許容範囲$|\mathcal Q|<1/2$の端に極端に近づかない限り、
+今回の有限時間窓での距離行列は数値的に非常に直線に近い。
+一方、$|\mathcal Q|\to1/2$では式\eqref{eq:q}の分母$1-4\mathcal Q^2$が小さくなり、
+$q$が1から離れるため、内向き確率流と距離差が増える。
+
+この結果は、状態集合を1パラメータで選んだことだけで一次元性が自動的に生じるわけではない一方、
+このKrylov時間発展では有限$q$の量子的な戻りが小さく、MDSがほぼ一次元を返し得ることを示す。
+Hashimoto--Tanahashiの調和振動子で使われた分布族では累積分布が順序づけられており、
+$W_1$が座標差になる。今回の式\eqref{eq:cdf-current}--\eqref{eq:gap-backflow}は、
+その性質をKrylov時間発展では確率流の符号として直接検査できる形にしたものである。
 
 \section{短時間展開の独立検算}
 \subsection{最初の遷移で$t^2$項は決まる}
@@ -438,11 +647,16 @@ $\log\cosh$近似の誤差、輸送距離の恒等式とその限界、同じ状
 Green関数から時空を構成するGubankova--Sachdev--Tarnopolskyの方法\cite{Gubankova}との比較は、
 この対応を設定してから行う。今回の$at$を、そのまま逆温度で規格化したbulk時間と同一視しない。
 
-元の問いに近い、より直接的な次の検証は、初期点からの距離だけでなく、
-複数時刻間の距離行列を調べることである。
-式\eqref{eq:counterexample}が示すように、$W_1=C$を保ったまま直線距離からのずれが生じる。
-そのずれが$q\to1$でどのように小さくなり、確率分布の幅や量子的な戻りとどう結びつくかは、
-単に$\log\cosh$をfitするより直接的に、低次元の距離構造が成立する条件を調べる問題となる。
+本ノートで、初期点からの距離だけでなく複数時刻間の距離行列を調べる検証まで実施した。
+その結果、式\eqref{eq:gap-backflow}により、直線距離からのずれはKrylov番号方向の内向き確率流と直接結びつくことが分かった。
+$q=1$ではPoisson分布族として厳密な直線距離が得られ、有限$q$では厳密性が破れる一方、
+double-scaling limitで典型的な$q\simeq1$の有限時間窓では、その破れは非常に小さい。
+
+次の物理的検証は、この距離行列の性質そのものをbulk動径座標と同一視することではない。
+Krylov complexityが重力側の長さと対応する既存の議論と規約を揃え、fixed-charge sectorごとに
+$C(t)=W_1(P(t),\delta_0)$を二境界間の空間的測地線長と比較する必要がある。
+その際、Green関数から再構成されるmetricと電場は別のデータであり、
+Krylov番号上の確率流$J_k$をbulkの物質流や電流と同一視しない。
 
 \appendix
 \section{再実行とファイルの対応}
