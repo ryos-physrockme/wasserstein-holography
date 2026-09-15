@@ -6,7 +6,20 @@ import sympy as sp
 from scipy.linalg import expm
 from scipy.stats import wasserstein_distance
 
-from src.krylov import evolve, links, lower_bound, matched_curve, observables, physical_parameters, pairwise_example
+from src.krylov import (
+    classical_mds_spectrum,
+    discrete_w1_matrix,
+    distance_geometry,
+    evolve,
+    links,
+    lower_bound,
+    matched_curve,
+    observables,
+    pairwise_example,
+    physical_parameters,
+    poisson_limit_probability,
+    probability_current,
+)
 
 
 class KrylovTests(unittest.TestCase):
@@ -65,6 +78,47 @@ class KrylovTests(unittest.TestCase):
         result = pairwise_example()
         self.assertGreater(result["gap"], 0.007)
         self.assertGreater(result["P0_t2"], result["P0_t1"])
+
+    def test_gap_equals_twice_cdf_reversal(self):
+        times = np.linspace(0, 2.5, 101)
+        chi, _ = evolve(0.2, 1.0, times, 180)
+        probability = chi**2
+        p, r = probability[80], probability[100]
+        cdf_difference = np.cumsum(p-r)[:-1]
+        w1 = np.sum(np.abs(cdf_difference))
+        mean_difference = (r-p) @ np.arange(len(p))
+        predicted_gap = 2*np.sum(np.maximum(-cdf_difference, 0.0))
+        self.assertAlmostEqual(w1-mean_difference, predicted_gap, places=12)
+
+    def test_probability_current_is_cdf_flux(self):
+        times = np.linspace(0, 1.3, 27)
+        chi, generator = evolve(0.6, 1.0, times, 80)
+        row = 19
+        velocity = generator @ chi[row]
+        probability_derivative = 2*chi[row]*velocity
+        cdf_derivative = np.cumsum(probability_derivative)[:-1]
+        current = probability_current(0.6, 1.0, chi[[row]])[0]
+        np.testing.assert_allclose(cdf_derivative, -current, atol=2e-13)
+
+    def test_q1_poisson_limit_is_exact_line_metric(self):
+        times = np.linspace(0, 3, 31)
+        probability = poisson_limit_probability(1.0, times, 100)
+        distance = discrete_w1_matrix(probability)
+        mean = probability @ np.arange(probability.shape[1])
+        np.testing.assert_allclose(distance, np.abs(mean[:, None]-mean[None, :]), atol=2e-12)
+        eigenvalues = classical_mds_spectrum(distance)
+        self.assertGreater(eigenvalues[0], 1.0)
+        self.assertLess(np.max(np.abs(eigenvalues[1:])), 2e-10)
+
+    def test_distance_geometry_detects_finite_q_backflow(self):
+        x = np.linspace(0, 4, 201)
+        q = 0.2
+        times = x/np.sqrt(1-q)
+        chi, _ = evolve(q, 1.0, times, 140)
+        summary, _, _ = distance_geometry(chi**2)
+        self.assertGreater(summary["max_pairwise_gap"], 0.02)
+        self.assertGreater(summary["maximum_cdf_reversal"], 0.01)
+        self.assertLess(summary["gap_identity_error"], 1e-10)
 
     def test_invalid_inputs(self):
         with self.assertRaises(ValueError):
