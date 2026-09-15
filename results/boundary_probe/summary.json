@@ -1,0 +1,73 @@
+{
+  "source": "Heller-Papalini-Schuhmann arXiv:2412.17785v2 bilocal exp(-Delta L); chain algebra in this repository",
+  "interpretation": "exact q-oscillator identity; established bilocal gravity dictionary for neutral DSSYK only",
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+  },
+  "runs": [
+    {
+      "epsilon": 0.05,
+      "beta_omega": 10.0,
+      "time_omega": 1.0,
+      "nmax": 360,
+      "identity_max_abs_error": 3.552713678800501e-14,
+      "finite_difference_current_error": 1.0465048272401134e-10,
+      "finite_difference_hopping_error": 1.1349454709375095e-10,
+      "finite_difference_coherence_error": 3.859458257469925e-12,
+      "energy": 1.5163214128456057,
+      "length_velocity": 0.13548927259576052,
+      "current_generator_delta1": 0.1793400205240659,
+      "hopping_generator_delta1": -2.6099572318960274,
+      "small_delta_velocity_error": 3.759934823044375e-06,
+      "small_delta_energy_error": 0.0010584768884314144
+    },
+    {
+      "epsilon": 0.02,
+      "beta_omega": 10.0,
+      "time_omega": 1.0,
+      "nmax": 900,
+      "identity_max_abs_error": 7.496225862269057e-13,
+      "finite_difference_current_error": 1.2336144383784386e-08,
+      "finite_difference_hopping_error": 4.722944844104404e-07,
+      "finite_difference_coherence_error": 4.724555642039031e-09,
+      "energy": 3.6006752771454,
+      "length_velocity": 0.1343126072900415,
+      "current_generator_delta1": 0.43483679706419454,
+      "hopping_generator_delta1": -6.304395404399165,
+      "small_delta_velocity_error": 3.7085270365166956e-06,
+      "small_delta_energy_error": 0.002652206415064029
+    },
+    {
+      "epsilon": 0.01,
+      "beta_omega": 10.0,
+      "time_omega": 1.0,
+      "nmax": 1800,
+      "identity_max_abs_error": 7.087663789206999e-13,
+      "finite_difference_current_error": 5.49447709552453e-10,
+      "finite_difference_hopping_error": 2.600763873594758e-05,
+      "finite_difference_coherence_error": 1.3003819370043084e-07,
+      "energy": 7.074592362784874,
+      "length_velocity": 0.13391643284071228,
+      "current_generator_delta1": 0.8608198374504192,
+      "hopping_generator_delta1": -12.463701887811325,
+      "small_delta_velocity_error": 3.6913498868973438e-06,
+      "small_delta_energy_error": 0.00530836148658409
+    }
+  ],
+  "finite_polynomial_inversion_demo": {
+    "7": {
+      "max_error": 4.5351848002456666e-12,
+      "condition_number": 285769.0120304467
+    },
+    "10": {
+      "max_error": 2.0514883136446173e-08,
+      "condition_number": 351703786.4922575
+    },
+    "12": {
+      "max_error": 1.0566472423237858e-06,
+      "condition_number": 42020882840.62861
+    }
+  }
+}
