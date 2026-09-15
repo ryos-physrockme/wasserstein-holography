@@ -1,0 +1,560 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,bm,mathtools,booktabs,graphicx}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\title{chord基底の確率流と長さの共役運動量\\熱的状態の位相復元とその限界}
+\author{研究ノート}
+\date{2026年9月16日}
+\begin{document}
+\maketitle
+\begin{abstract}
+固定したchord基底で、長さの確率分布から失われる位相を、どの観測量で補えるかを調べる。
+長さの変化率は隣接振幅の積の虚部を測り、相対位相の正弦に依存する。
+実部も保持すれば、確率が非零で連結な領域上の純粋状態を全体位相を除いて復元できる。
+一方、確率分布・全確率流・総エネルギーが同じでも異なる純粋状態を明示的に構成でき、
+本Hamiltonianではその曖昧性が実時間発展後にも残る。
+既存の重力側の長さ差分方程式を正規直交基底で書き直し、半古典的な共役運動量と照合する。
+熱的状態で測る隣接振幅の積の位相は、調べた範囲でこの古典軌道へ小変形に伴って近づく。
+確率と位相を保持する構成は既知の量子力学の正準形式であり、独立な電磁場を導出するものではない。
+\end{abstract}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
+
+\section{問題の設定と用語}
+量子状態を一つの基底で測定すると、基底ごとの確率は得られるが、異なる振幅間の相対位相は一般には残らない。
+確率分布にWasserstein距離やFisher計量を入れても、この測定で失われた情報は回復しない。
+本稿の問いは、長さの測定確率に加えて何を保持すれば、量子状態とその時間発展を記述できるか、である。
+
+ホログラフィーでは、重力を含む理論を低次元の量子系で記述する。
+重力側の時空をbulk、低次元の量子系を置く側をboundaryと呼ぶ。
+本稿で扱う長さは、ある重力理論の二つの境界を結ぶ長さ演算子と対応する量である。
+長さの測定結果を並べた半直線と、重力側の時空内の空間座標は異なる。
+これらを同一視して新しい時空計量を構成することはしない。
+
+多数のフェルミオンがランダムな多体相互作用を持つSachdev--Ye--Kitaev模型を、以下SYK模型と略記する。
+フェルミオンの種類の数と相互作用次数を同時に大きくするdouble-scaling limitでは、
+乱数平均の図をchord diagramとして数え上げ、補助的な量子力学に書き直せる。
+chordは、乱数平均で対となった相互作用の挿入を結ぶ線である。
+この線を途中で切ったとき、まだ閉じていない本数を整数$n=0,1,\ldots$で数える。
+本稿の基底$\ket n$はこの番号に対応する正規直交基底である。
+基準状態$\ket0$にHamiltonianを繰り返し作用させて得るベクトルを直交化したKrylov基底とも一致する\cite{Heller}。
+
+本稿では固定電荷complex SYKに現れる共通形式の有効Hamiltonianを入力とする\cite{Forste}。
+全ての比較で保存電荷sector、Hamiltonian、基底を固定する。
+ここでsectorとは、保存電荷の固有値を固定した部分空間である。
+異なる電荷sectorを一つの荷電重力作用に組み込む対応は導出しない。
+また、Husimi $Q$分布を使った元のWasserstein holographyの構成とは、測定と確率の標本空間が異なる\cite{HashimotoTanahashi}。
+
+\section{Hamiltonianと熱的状態}
+正の無次元パラメータを$\epsilon$、エネルギー尺度を$\Omega>0$とし、
+\begin{equation}
+ q=e^{-\epsilon},\qquad B=\frac{\Omega}{\epsilon},\qquad
+ b_n=B\sqrt{1-q^n},\qquad b_0=0
+ \label{eq:links}
+\end{equation}
+と定義する。$q$は変形を指定する量であり、保存電荷そのものではない。
+時間発展の生成子を
+\begin{equation}
+ K\ket n=2B\ket n-b_{n+1}\ket{n+1}-b_n\ket{n-1}
+ \label{eq:K}
+\end{equation}
+とする。$K$は実対称な三重対角行列である。
+隣接係数を正にしたHamiltonian$H_{\rm K}$からは、
+$D\ket n=(-1)^n\ket n$という基底の位相変更を行い、
+$K=D H_{\rm K}D+2B I$として得られる。
+この表現変更とエネルギー原点の変更は、基底測定の確率を変えない。
+以下では$\hbar=k_{\rm B}=1$とする。
+
+長さ演算子と測定確率を
+\begin{equation}
+ \hat\ell=\epsilon\sum_{n\geq0}n\ket n\bra n,
+ \qquad P_n(t)=|\psi_n(t)|^2,
+ \qquad \psi_n(t)=\bra n\psi(t)\rangle
+ \label{eq:length}
+\end{equation}
+と定義する。$\ell_n=\epsilon n$は無次元の長さである。
+長さ演算子とchord数の対応は既存の重力側の構成から借りる\cite{Heller}。
+Wasserstein距離から新たに導出したものではない。
+
+逆温度を$\beta=1/T$とした熱的準備状態は
+\begin{equation}
+ \ket{\psi_\beta(t)}=\frac{e^{-\ii Kt}e^{-\beta K/2}\ket0}{\sqrt{Z_\beta}},
+ \qquad Z_\beta=\bra0 e^{-\beta K}\ket0
+ \label{eq:thermal}
+\end{equation}
+である。$e^{-\beta K/2}$で高エネルギー成分を抑え、準備後に実時間発展する。
+基底は準備前の$\ket0$を基準に固定し、温度ごとにKrylov基底を作り直さない。
+式\eqref{eq:thermal}は補助Hilbert空間の純粋状態であり、Gibbs密度演算子そのものではない。
+
+\section{確率流は相対位相の正弦を測る}
+\subsection{隣接振幅の積と連続の式}
+確率が非零の場所では
+\begin{equation}
+ \psi_n=\sqrt{P_n}e^{\ii S_n},\qquad
+ \Theta_n=S_{n+1}-S_n
+ \label{eq:phase}
+\end{equation}
+と書ける。$S_n$は振幅の位相、$\Theta_n$は隣接する振幅間の相対位相である。
+位相そのものは$2\pi$の整数倍だけ不定である。
+隣接振幅の複素積を
+\begin{equation}
+ c_n=\psi_n^*\psi_{n+1}
+ =\sqrt{P_nP_{n+1}}e^{\ii\Theta_n}
+ \label{eq:coherence}
+\end{equation}
+と定義する。この量は隣接基底間のコヒーレンスを表す。
+ここでいうコヒーレンスは、密度演算子の非対角成分に含まれる位相の情報である。
+
+Schr\"odinger方程式$\ii\dot\psi=K\psi$に式\eqref{eq:K}を代入すると、
+\begin{align}
+ J_n&=2b_{n+1}\operatorname{Im}c_n
+ =2b_{n+1}\sqrt{P_nP_{n+1}}\sin\Theta_n,
+ \label{eq:J}\\
+ \dot P_n&=J_{n-1}-J_n,\qquad J_{-1}=0
+ \label{eq:continuity}
+\end{align}
+を得る。$J_n$は、番号$n$から$n+1$へ外向きに流れる確率の時間あたりの量である。
+式\eqref{eq:continuity}は離散的な確率保存則である。
+平均長$m=\sum_n\ell_nP_n$の変化率は
+\begin{equation}
+ \dot m=\epsilon\sum_{n\geq0}J_n
+ =\langle\hat v_\ell\rangle,
+ \qquad \hat v_\ell=\ii[K,\hat\ell]
+ \label{eq:velocity}
+\end{equation}
+となる。ここで$\hat v_\ell$は、長さの時間変化を測るHermite演算子である。
+
+\subsection{確率だけでなく流れが分かっても、一意とは限らない}
+$P_n,P_{n+1}>0$なら、$P_n$と$J_n$から
+\begin{equation}
+ \sin\Theta_n=\frac{J_n}{2b_{n+1}\sqrt{P_nP_{n+1}}}
+ \label{eq:sin}
+\end{equation}
+が分かる。しかし$\Theta_n$と$\pi-\Theta_n$は同じ正弦を持つ。
+従って、流れは相対位相の符号付き情報を持つが、一般の位相全体を決めるわけではない。
+
+他方、エネルギーの隣接項への寄与を$h_n$と書くと、
+\begin{equation}
+ h_n=-2b_{n+1}\operatorname{Re}c_n
+ =-2b_{n+1}\sqrt{P_nP_{n+1}}\cos\Theta_n,
+ \qquad E=\langle K\rangle=2B+\sum_n h_n
+ \label{eq:energy}
+\end{equation}
+である。各$h_n$は余弦の情報を含む。ただし総エネルギー$E$だけでは、その総和しか分からない。
+
+局所的に$|\Theta_n|<\pi/2$と分かっていれば、余弦が正の枝を選べるため、
+式\eqref{eq:sin}から$\Theta_n=\arcsin(\cdots)$で復元できる。
+これは追加の状態制限であり、一般の量子状態に対する一意性ではない。
+連続空間の低運動量近似で確率流から位相勾配を求める操作に近いのは、この枝を限定した領域である。
+
+\section{確率・全確率流・総エネルギーを共有する異なる純粋状態}
+\subsection{三つの基底だけを使う明示例}
+初期時刻では$n=0,1,2$だけに振幅を置く。
+三つの確率を
+\begin{equation}
+ w_1=\frac12,\qquad
+ w_0=\frac{b_2^2}{2(b_1^2+b_2^2)},\qquad
+ w_2=\frac{b_1^2}{2(b_1^2+b_2^2)}
+ \label{eq:weights}
+\end{equation}
+と定義する。$w_0+w_1+w_2=1$であり、
+$b_1\sqrt{w_0w_1}=b_2\sqrt{w_1w_2}$が成り立つ。
+$0<\theta<\pi/2$として二つの状態を
+\begin{align}
+ \ket{\psi}&=\sqrt{w_0}\ket0+\sqrt{w_1}e^{\ii\theta}\ket1-\sqrt{w_2}\ket2,
+ \label{eq:ambigA}\\
+ \ket{\phi}&=\sqrt{w_0}\ket0+\sqrt{w_1}e^{\ii(\pi-\theta)}\ket1-\sqrt{w_2}\ket2
+ \label{eq:ambigB}
+\end{align}
+とする。二状態の確率は同じである。
+相対位相は順に$(\theta,\pi-\theta)$と$(\pi-\theta,\theta)$なので、各リンクの正弦も等しい。
+式\eqref{eq:weights}により実部の二つのエネルギー寄与は相殺され、両状態で$E=2B$となる。
+一方、二つの純粋状態の重なりの二乗、すなわち量子fidelityは
+\begin{equation}
+ \mathcal F_{\rm q}(\psi,\phi)=|\langle\psi|\phi\rangle|^2=\sin^2\theta
+ \label{eq:ambigF}
+\end{equation}
+であり、一般には1ではない。特に$\theta=\pi/6$なら$\mathcal F_{\rm q}=1/4$である。
+
+\subsection{この曖昧性は時間発展を見ても残る}
+式\eqref{eq:ambigB}は$\phi=D\psi^*$と書ける。
+$D_{nn}=(-1)^n$であり、星はこの基底での複素共役を表す。
+$K$の隣接項は$D$で符号が反転するので
+\begin{equation}
+ D K D=4B I-K
+ \label{eq:DKD}
+\end{equation}
+である。従って、同じHamiltonianで発展させた二状態は
+\begin{equation}
+ \phi(t)=e^{-4\ii Bt}D\psi(t)^*
+ \label{eq:antiunitary}
+\end{equation}
+を満たす。複素共役を含む写像であるため、これは通常のユニタリ変換とは区別される。
+全体位相$e^{-4\ii Bt}$は確率と隣接振幅の積に寄与しない。
+よって全時刻で
+\begin{equation}
+ P_n^\phi(t)=P_n^\psi(t),\qquad
+ c_n^\phi(t)=-c_n^\psi(t)^*,\qquad
+ J_n^\phi(t)=J_n^\psi(t)
+ \label{eq:alltimes}
+\end{equation}
+が成り立つ。総エネルギーも初期値$2B$のまま保存される。
+
+従って、この模型では確率分布と全確率流を時間に沿って知っても、さらに総エネルギーを知っても、
+一般の純粋状態を一意に識別できない場合がある。
+これは低温の熱的状態の族の中に同じ縮退があると主張するものではない。
+明示例はエネルギーバンドの中央に平均エネルギーを持つ状態であり、熱的な低エネルギー状態への制限は追加情報となる。
+
+数値的には$\epsilon=0.2$、$\Omega=1$、$\theta=\pi/6$として
+\begin{equation}
+ (w_0,w_1,w_2)\simeq(0.32261520,\,0.5,\,0.17738480),
+ \qquad J_0=J_1\simeq0.85498694
+ \label{eq:ambignumeric}
+\end{equation}
+を得る。$0\leq\Omega t\leq2$の41時刻を直接発展させる検算では、
+二状態の確率の最大差は約$3.1\times10^{-16}$、流れの最大差は約$2.0\times10^{-15}\Omega$であった。
+相対位相の余弦、すなわち$c_n$の実部を測れば、両状態は区別できる。
+
+\section{何を保持すれば純粋状態を復元できるか}
+\subsection{隣接振幅の実部と虚部をともに用いる}
+$P_n>0$で、非零確率の領域が連続した番号の区間になっているとする。
+純粋状態であることを前提として、$P_n$と隣接振幅の複素積$c_n$を知れば
+\begin{equation}
+ \Theta_n=\operatorname{atan2}(\operatorname{Im}c_n,\operatorname{Re}c_n),
+ \qquad S_{n+1}=S_n+\Theta_n,
+ \qquad \psi_n=\sqrt{P_n}e^{\ii S_n}
+ \label{eq:reconstruction}
+\end{equation}
+により復元できる。$\operatorname{atan2}(y,x)$は、実部$x$、虚部$y$を持つ複素数の位相を、
+象限を区別して返す関数である。
+最初の$S_n$の選択だけが全体位相として残る。
+
+$c_n$の実部と虚部は、それぞれ
+\begin{equation}
+ \hat R_n=\frac{\ket n\bra{n+1}+\ket{n+1}\bra n}{2},\qquad
+ \hat I_n=\frac{\ket n\bra{n+1}-\ket{n+1}\bra n}{2\ii}
+ \label{eq:observables}
+\end{equation}
+というHermite演算子の期待値である。
+従って、これは計算上の波動関数を直接読み出すことだけに依存した定義ではない。
+ただし一般には互いに可換でない観測量であり、同一の一回の測定で全てを同時に確定させるとは言わない。
+同じ状態を複数回準備し、異なる観測を行う必要がある。
+
+\subsection{零点と混合状態では追加の制限がある}
+途中に$P_n=0$があれば、区間が分断される。
+零点を挟む隣接積も零になるため、離れた区間間の相対位相はこのデータからは定まらない。
+また、混合状態には純粋状態の関係$|c_n|^2=P_nP_{n+1}$は一般には成り立たない。
+
+例えば三次元部分空間上で
+\begin{equation}
+ \rho_\pm=\frac13 I_3\ \pm\eta(\ket0\bra2+\ket2\bra0),
+ \qquad 0<\eta<\frac13
+ \label{eq:mixed}
+\end{equation}
+とすれば、固有値は$1/3,1/3+\eta,1/3-\eta$であり、正の密度演算子である。
+二状態は同じ対角確率と同じ隣接積を持つが、$0$と$2$の間の非対角成分が異なる。
+従って、式\eqref{eq:reconstruction}の一意性は、連結な非零確率を持つ純粋状態に限られる。
+
+\section{重力側の長さと共役運動量との照合}
+\subsection{正規直交基底への変換を先に行う}
+Heller--Papalini--Schuhmannは、sine dilaton gravityにおける長さ演算子とchord数の対応を示している\cite{Heller}。
+sine dilaton gravityは、計量に加えてdilatonと呼ばれるスカラー場を持ち、そのポテンシャルに正弦関数が現れる二次元重力理論である。
+本稿ではその重力作用から再導出せず、同文献の差分方程式と長さ演算子の対応を入力とする。
+
+同文献の変形パラメータを$q_{\rm H}$と書けば、本稿は$q=q_{\rm H}^2$、
+$\epsilon=2|\log q_{\rm H}|$を使っている。
+補遺の式(24)--(26)に現れる規格化前の成分を$u_n$とすると、
+エネルギーの全体尺度と符号を別にして、差分作用は
+\begin{equation}
+ u_{n+1}+(1-q^n)u_{n-1}
+ \label{eq:rawrecurrence}
+\end{equation}
+である。ここで
+\begin{equation}
+ \mathcal W_n=\prod_{j=1}^n(1-q^j),\qquad \mathcal W_0=1,\qquad
+ u_n=\sqrt{\mathcal W_n}\,\psi_n
+ \label{eq:normalization}
+\end{equation}
+とすれば、式\eqref{eq:rawrecurrence}を$\sqrt{\mathcal W_n}$で割ることで
+\begin{equation}
+ \sqrt{1-q^{n+1}}\,\psi_{n+1}+\sqrt{1-q^n}\,\psi_{n-1}
+ \label{eq:orthorecurrence}
+\end{equation}
+を得る。これが本稿の正規直交基底で使う隣接係数である。
+この変換は有限行列でも独立に検査した。
+
+同文献の演算子順序付きHamiltonianに出る運動量の記号を、そのまま本稿の実位相差と同一視しない。
+規格化前の左右固有関数と、規格化された状態成分では表示が異なるためである。
+本稿では式\eqref{eq:orthorecurrence}に基づき、実時間発展と確率流の符号に整合する運動量を定義する。
+
+\subsection{小さい格子幅での正準形式}
+$\epsilon\ll1$で、$\ell=\epsilon n$に沿って振幅が滑らかに変化する領域を考える。
+位相が$\epsilon^{-1}$の速さで変化する波動関数を
+\begin{equation}
+ \psi_n(t)\simeq a(\ell,t)\exp\!\left[\frac{\ii W(\ell,t)}{\epsilon}\right],
+ \qquad p(\ell,t)=\partial_\ell W(\ell,t)
+ \label{eq:WKB}
+\end{equation}
+と置く。ここで$a$はゆっくり変化する振幅、$W$は位相を記述する作用である。
+この表示は半古典近似であり、波束が狭く、格子上で急変しない領域で使う。
+すると$\psi_{n\pm1}/\psi_n$の先頭次数は$e^{\pm\ii p}$となる。
+$r(\ell)=\sqrt{1-e^{-\ell}}$と定義すると、
+$\ii\epsilon\partial_t\psi=(\epsilon K)\psi$の先頭次数は
+\begin{equation}
+ \partial_tW+h(\ell,p)=0,\qquad
+ h(\ell,p)=2\Omega\{1-r(\ell)\cos p\}
+ \label{eq:classicalH}
+\end{equation}
+である。$h$は$K$の$\epsilon$倍の半古典Hamiltonianである。
+$\ell,p$を正準変数として$\{\ell,p\}=1$とすれば、
+\begin{equation}
+ \dot\ell=2\Omega r(\ell)\sin p,
+ \qquad \dot p=\Omega\frac{e^{-\ell}}{r(\ell)}\cos p
+ \label{eq:Hamiltoneq}
+\end{equation}
+となる。$p/\epsilon$を通常の作用の運動量とすれば、Hamiltonianは$K$の半古典値となり、同じ時間発展を得る。
+式\eqref{eq:Hamiltoneq}は、量子確率流が相対位相の正弦に依存したことと対応している。
+
+$p$は局所的には$2\pi$周期の位相変数である。ただし、半直線の量子Hilbert空間上で
+大域的な自己共役演算子$\hat p$の存在を仮定してはいない。
+実際、$S\ket n=\ket{n+1}$という片側シフトは
+\begin{equation}
+ S^\dagger S=I,\qquad SS^\dagger=I-\ket0\bra0
+ \label{eq:unilateral}
+\end{equation}
+であり、ユニタリ演算子ではない。
+従って、これを全空間で自己共役演算子の指数関数と無条件に同一視することはできない。
+
+\subsection{量子状態で測れる位相と半古典運動量}
+量子力学で曖昧さのない演算子として
+\begin{equation}
+ A\ket n=\sqrt{1-q^n}\ket{n-1},\qquad A\ket0=0
+ \label{eq:A}
+\end{equation}
+を導入する。$A$は番号を一つ減らす、係数付きのシフトである。
+$z=\langle A\rangle$を複素数として定義すると、
+\begin{equation}
+ z=\sum_n\sqrt{1-q^{n+1}}\,c_n,
+ \qquad \langle K\rangle=2B(1-\operatorname{Re}z),
+ \qquad \dot m=2\Omega\operatorname{Im}z
+ \label{eq:z}
+\end{equation}
+が規格化された状態で厳密に成り立つ。
+$z\neq0$のとき、その位相を
+\begin{equation}
+ p_{\rm coh}=\arg z
+ =\operatorname{atan2}\!\left(\frac{\dot m}{2\Omega},1-\frac{\langle K\rangle}{2B}\right)
+ \label{eq:pcoh}
+\end{equation}
+と定義する。添字cohは、隣接コヒーレンスの和の位相であることを表す。
+これは定義されていない運動量演算子の期待値ではなく、実験・計算で評価可能な二つの期待値から作る量である。
+
+狭い半古典波束では$z\simeq r(m)e^{\ii p}$なので、$p_{\rm coh}$を古典運動量と比較できる。
+広い状態では、この一つの複素平均値だけから局所位相分布は決まらない。
+式\eqref{eq:ambigA}--\eqref{eq:ambigB}もその具体例である。
+
+\section{熱的状態の運動量をフィットせずに比較する}
+半古典的な熱的状態を指定する$u\in(0,\pi/2]$は、
+\begin{equation}
+ \beta\Omega\sin u=\pi-2u
+ \label{eq:saddle}
+\end{equation}
+で決まる。既存の長さ対応\cite{Heller}を本稿の尺度に直すと、
+\begin{align}
+ \ell_{\rm cl}(t)&=-2\log\sin u+2\log\cosh(\Omega t\sin u),
+ \label{eq:ellcl}\\
+ r(\ell_{\rm cl})\cos p_{\rm cl}&=\cos u,\qquad
+ r(\ell_{\rm cl})\sin p_{\rm cl}=\sin u\tanh(\Omega t\sin u)
+ \label{eq:orbit}
+\end{align}
+となる。後者はエネルギー保存と式\eqref{eq:Hamiltoneq}から得られる。
+従って
+\begin{equation}
+ p_{\rm cl}(t)=\operatorname{atan2}
+ \bigl(\sin u\tanh(\Omega t\sin u),\cos u\bigr)
+ \label{eq:pcl}
+\end{equation}
+である。$u$は温度と入力Hamiltonianから決まり、位相の時間データにフィットしていない。
+式\eqref{eq:pcl}を差分で微分し、式\eqref{eq:Hamiltoneq}の両方を満たすことも検査した。
+
+\begin{table}[htbp]
+ \centering\small
+ \input{results/phase_space/table.tex}
+ \caption{$\beta\Omega=10$、$0\leq\Omega t\leq10$の81時刻での比較。
+ 最大位相偏差は$\max_t|p_{\rm coh}(t)-p_{\rm cl}(t)|$。
+ 最後の列は基底の最大番号を$M=\lceil18/\epsilon\rceil$から$2M$に変えたときの差である。
+ 表の零は打切り誤差の厳密な消失ではなく、計算精度内の一致である。}
+ \label{tab:momentum}
+\end{table}
+
+数値結果では、調べた範囲で最大位相偏差はほぼ$\epsilon$に比例して減少する。
+$\epsilon\to0$の一様収束や、非常に長い時間での挙動を証明したわけではない。
+例えば$\epsilon=0.02$、$\Omega t=1$では
+\begin{equation}
+ p_{\rm coh}\simeq0.06955233,\qquad p_{\rm cl}\simeq0.06905170,
+ \qquad \dot m/\Omega\simeq0.13431261
+ \label{eq:numericphase}
+\end{equation}
+である。同じ熱的初期状態から負の時間へ進めると、振幅は複素共役となり、
+$z\to z^*$、$p_{\rm coh}\to-p_{\rm coh}$、$\dot m\to-\dot m$となる。
+確率分布だけでは同じに見えた正負時間の状態が、この量では区別される。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.77\textwidth]{results/phase_space/momentum.pdf}
+ \caption{隣接コヒーレンスの和から求めた位相と、半古典的な共役運動量の比較。
+ 時間は$K$が生成する同じ時間で、エネルギー尺度$\Omega$を固定している。}
+ \label{fig:momentum}
+\end{figure}
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.77\textwidth]{results/phase_space/length_momentum.pdf}
+ \caption{$\epsilon=0.02$での平均長と位相の組。
+ 同じ長さでも、正負時間の軌道は運動量の符号で分かれる。
+ 広い量子状態一般をこの二つの平均値で完全に表せるという意味ではない。}
+ \label{fig:orbit}
+\end{figure}
+
+さらに$\Omega t=1$の各量子状態について、$P_n$と$c_n$から式\eqref{eq:reconstruction}による復元を実行した。
+$P_n>10^{-14}$の連結区間を保持したとき、省いた確率は最大約$5.9\times10^{-14}$で、
+保持した区間内の規格化された復元誤差$1-\mathcal F_{\rm q}$は約$5\times10^{-16}$以下であった。
+この検算では保持した区間で余弦が正だったため、式\eqref{eq:sin}から枝を限定した復元も同じ精度で一致した。
+この一致は熱的状態のこの範囲についてであり、一般状態の一意性の主張ではない。
+
+\section{量子演算子としての検算と揺らぎ}
+$A$の実部・虚部に対応するHermite演算子を
+\begin{equation}
+ X=\frac{A+A^\dagger}{2},\qquad Y=\frac{A-A^\dagger}{2\ii}
+ \label{eq:XY}
+\end{equation}
+と定義する。$\langle X\rangle=\operatorname{Re}z$、$\langle Y\rangle=\operatorname{Im}z$である。
+無限鎖では
+\begin{align}
+ A^\dagger A&=1-e^{-\hat\ell},\qquad AA^\dagger=1-qe^{-\hat\ell},
+ \label{eq:AA}\\
+ [\hat\ell,X]&=-\ii\epsilon Y,\qquad
+ [\hat\ell,Y]=\ii\epsilon X,
+ \label{eq:commLX}\\
+ X^2+Y^2&=1-\frac{1+q}{2}e^{-\hat\ell}
+ \label{eq:quadrature}
+\end{align}
+を得る。従って
+\begin{equation}
+ |z|^2+\Var(X)+\Var(Y)
+ =1-\frac{1+q}{2}\langle e^{-\hat\ell}\rangle
+ \label{eq:spread}
+\end{equation}
+である。$\Var(X)=\langle X^2\rangle-\langle X\rangle^2$は$X$の分散で、$Y$も同様である。
+半古典関係$|z|^2\simeq1-e^{-m}$を量子状態へそのまま適用する前に、
+右辺の平均値と左辺の分散を区別する必要がある。
+
+有限鎖$n=0,\ldots,M$では、式\eqref{eq:quadrature}の右辺に
+\begin{equation}
+ -\frac{1-q^{M+1}}{2}\ket M\bra M
+ \label{eq:endpoint}
+\end{equation}
+が加わる。コードはこの端点補正を含めて検算する。
+表\ref{tab:momentum}の実行では、式\eqref{eq:spread}の残差は約$4.5\times10^{-16}$以下であった。
+
+長さと変化率は可換ではなく、式\eqref{eq:commLX}より
+\begin{equation}
+ [\hat\ell,\hat v_\ell]=2\ii\epsilon\Omega X,
+ \qquad \sigma_\ell\sigma_{v_\ell}\geq\epsilon\Omega|\langle X\rangle|
+ \label{eq:uncertainty}
+\end{equation}
+という不確定性関係も得る。
+従って、長さと運動量の情報を追加する場合にも、任意の量子状態で二つを同時に測れる古典的な同時確率分布を、
+測定手順なしで仮定してはいけない。
+
+\section{確率と位相を保持する幾何と、電磁場との区別}
+確率と位相を合わせて$\psi_n=\sqrt{P_n}e^{\ii S_n}$と書けば、
+純粋状態の量子力学の作用は、規格化を課したうえで
+\begin{align}
+ I&=\int\dd t\left[-\sum_nP_n\dot S_n-E(P,S)\right],\label{eq:action}\\
+ E(P,S)&=2B\sum_nP_n-2\sum_n b_{n+1}\sqrt{P_nP_{n+1}}\cos(S_{n+1}-S_n).\label{eq:energyfunctional}
+\end{align}
+と表せる。$P_n$に関する変分で
+\begin{equation}
+ \dot S_n=-2B+
+ b_n\sqrt{\frac{P_{n-1}}{P_n}}\cos\Theta_{n-1}
+ +b_{n+1}\sqrt{\frac{P_{n+1}}{P_n}}\cos\Theta_n
+ \label{eq:phasedot}
+\end{equation}
+を得て、$S_n$の変分では式\eqref{eq:continuity}を得る。
+変分では$P_n$を独立変数として扱い、規格化に対する乗数は全体位相に吸収した。
+$P_n=0$の点ではこの座標表示は特異になるが、元の線形Schr\"odinger方程式は使える。
+
+同じ表示でBerry接続とFubini--Study計量を直接計算すると
+\begin{align}
+ \mathcal A&=\ii\langle\psi|\dd\psi\rangle=-\sum_nP_n\dd S_n,
+ \qquad \mathcal F=\dd\mathcal A=-\sum_n\dd P_n\wedge\dd S_n,
+ \label{eq:berry}\\
+ \dd s_{\rm FS}^{\,2}
+ &=\frac14\sum_n\frac{(\dd P_n)^2}{P_n}
+ +\sum_nP_n(\dd S_n)^2-\left(\sum_nP_n\dd S_n\right)^2
+ \label{eq:FS}
+\end{align}
+となる。Fubini--Study計量は、全体位相を同一視した純粋状態の微小な違いを測る計量である。
+第一項はFisher計量の$1/4$倍で、残りは相対位相の変化を表す。
+この式は正規化された振幅から直接導出できる既知の構造である。
+
+ここでのBerry接続は状態パラメータの空間に入る接続であり、bulk時空上の電磁ポテンシャルではない。
+動力学も式\eqref{eq:action}のHamiltonianを与えて初めて定まる。
+今回追加した位相は、長さと対になる力学変数を記述する。
+保存電荷によって生成される独立な$U(1)$ゲージ場や、そのMaxwell作用を導出したわけではない。
+情報幾何の接続を任意に選ぶことも、本稿の復元と正準形式には必要なかった。
+
+\section{数値手順、位置づけ、残る問題}
+今回の計算は$\beta\Omega=10$、$\epsilon=0.05,0.02,0.01,0.005$について行った。
+疎行列指数関数で熱的準備と実時間発展を計算し、基底数を倍にした計算を独立に実行した。
+熱的準備ではアンダーフローを避けるため区間ごとに規格化するが、実時間発展は再規格化しない。
+位相復元の候補ベクトルは保持領域で規格化し、省いた確率を別に記録する。
+fidelityは両ベクトルのノルムで割った内積比として評価する。
+
+入力式からの連続の式、長さの速度、エネルギー、演算子代数、規格化前後の差分方程式を検算した。
+密行列の指数関数を用いた独立検査、複素共役と$D$を組み合わせた時間発展の恒等式、
+純粋状態の位相復元、混合状態の反例もテストに含めた。
+熱的実行の確率総和の最大のずれは約$1.5\times10^{-11}$、
+長さの速度恒等式の残差は約$2.6\times10^{-14}\Omega$以下であった。
+これらは浮動小数点計算の事後検査であり、厳密な区間演算による保証ではない。
+
+実装は\nolinkurl{src/phase_space.py}、テストは\nolinkurl{tests/test_phase_space.py}である。
+\nolinkurl{results/phase_space/}に数値表、各時刻の長さと位相、隣接振幅の積、図、誤差を保存する。
+原稿は\nolinkurl{notes/phase_space.tex}、PDFは\nolinkurl{docs/phase_space.pdf}に置き、GitHub Actionsで再計算とコンパイルを行う。
+
+本稿の段階で確認したのは、既存の長さ演算子の対応を使った場合に、
+どの追加観測量が位相と正準運動量の情報を持つか、という点である。
+確率流が追加されれば正負時間の軌道を区別できるが、一般の純粋状態の復元には余弦の情報も必要である。
+連結な非零確率を持つ純粋状態では、隣接振幅の実部と虚部を合わせれば復元できる。
+混合状態や零点を含む状態への拡張では、より離れた基底間の非対角成分も必要となる。
+
+輸送距離を電磁場や重力計量へ直接同一視する根拠は、この計算からは増えていない。
+一方、確率分布が何を落とし、どの観測量で補えるかは具体化した。
+この復元をそのまま新規性とみなすのではなく、物理的に許される境界観測量でどこまで実装できるかを、
+既存の重力側の演算子対応と照合する必要がある。
+
+\begin{thebibliography}{9}
+\bibitem{Heller}
+M.~P.~Heller, J.~Papalini and T.~Schuhmann,
+\emph{Krylov spread complexity as holographic complexity beyond JT gravity},
+\href{https://arxiv.org/abs/2412.17785v2}{arXiv:2412.17785v2 [hep-th]}.
+本文の式(5),(6)、補遺の式(17)--(26)の正準形式・差分方程式・規格化を参照した。
+\bibitem{Forste}
+S.~F\"orste, Y.~Kruse and S.~Natu,
+\emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model},
+\href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2 [hep-th]}.
+入力の隣接係数は式(3.33),(3.34)に基づく。
+\bibitem{HashimotoTanahashi}
+K.~Hashimoto and N.~Tanahashi,
+\emph{Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity},
+\href{https://arxiv.org/abs/2604.17649v1}{arXiv:2604.17649v1 [hep-th]}.
+本稿ではHusimi表現ではなく固定chord基底の測定を用いる。
+\end{thebibliography}
+\end{document}

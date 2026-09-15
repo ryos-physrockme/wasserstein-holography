@@ -7,9 +7,22 @@
 - 距離行列・確率流・Fisher計量・Berry曲率：[日本語PDF](docs/note.pdf)、[LaTeX](notes/note.tex)。
 - 有限温度のchord分布と二境界間の測地線長：[追補PDF](docs/geodesic.pdf)、[LaTeX](notes/geodesic.tex)。
 - 一般の二状態間の距離、分布の幅、位相の欠落：[追補PDF](docs/state_distance.pdf)、[LaTeX](notes/state_distance.tex)。
+- 確率流、位相復元、長さの共役運動量：[追補PDF](docs/phase_space.pdf)、[LaTeX](notes/phase_space.tex)。
 - [自動検証とPDF生成の実行履歴](https://github.com/ryos-physrockme/wasserstein-holography/actions)。
 
-追補も独立して読めるように定義と規約を記載しています。以前の研究ノートは保持しています。ソース更新時にGitHub Actionsがテスト、数値再計算、三つのPDFのコンパイルを行い、`docs/`と`results/`を更新します。最新のビルドが未完了の場合、PDF・結果の更新はソースより遅れます。
+追補も独立して読めるように定義と規約を記載しています。以前の研究ノートは保持しています。ソース更新時にGitHub Actionsがテスト、数値再計算、四つのPDFのコンパイルを行い、`docs/`と`results/`を更新します。最新のビルドが未完了の場合、PDF・結果の更新はソースより遅れます。
+
+## 確率流と共役運動量
+
+同じchord基底で、隣接振幅の積 `c_n=psi_n^* psi_(n+1)` を測ります。確率流 `J_n=2 b_(n+1) Im(c_n)` は相対位相の正弦、エネルギーの各隣接項は余弦に依存します。長さ分布に確率流を加えると正負時間の状態を区別できますが、一般には位相の枝が残ります。
+
+三基底からなる純粋状態の明示例では、全ての確率・確率流・総エネルギーが同じで、fidelityは1/4です。実Hamiltonianの `D K D=4B I-K`、`D_nn=(-1)^n` という関係により、この曖昧性は全時間で残ります。低温の熱的状態に限定した族での縮退を主張するものではありません。
+
+純粋状態で非零確率の支持が連結なら、確率と隣接振幅の実部・虚部から全体位相を除いて状態を復元できます。混合状態や途中に零点がある場合には、この情報だけでは不十分です。
+
+既存の重力差分方程式を正規直交化して、半古典Hamiltonian `h=2 Omega (1-sqrt(1-exp(-ell))*cos(p))` を照合します。`p_coh=arg(<A>)`、`A|n>=sqrt(1-q^n)|n-1>` は量子状態で測れる位相であり、大域的な運動量演算子の期待値とは区別します。`beta*Omega=10`、`0<=Omega*t<=10`で半古典軌道との差を確認し、有限鎖の端点補正を含む演算子恒等式と、倍の基底数での計算を検査します。
+
+実装は `src/phase_space.py`、テストは `tests/test_phase_space.py`、結果は `results/phase_space/` です。確率と位相の正準形式は既知の量子力学の構造です。この照合を新しい電磁場や重力理論の導出とは扱いません。
 
 ## 一般の二状態間の距離
 
@@ -33,7 +46,7 @@
 
 ## 以前の距離幾何の検証
 
-初期分布delta_0と整数間のコスト|n-m|を使うと、`W_1(P(t),delta_0)=sum_n n P_n(t)` は恒等式です。しかし任意の二時刻間の距離は平均の差より大きいことがあります。累積確率 `F_k=sum_{n<=k}P_n` と確率流 `J_k=2 b_{k+1} chi_k chi_{k+1}` は `dF_k/dt=-J_k` を満たし、分布の順序条件が直線距離への等長埋込みを決めます。
+初期分布delta_0と整数間のコスト|n-m|を使うと、`W_1(P(t),delta_0)=sum_n n P_n(t)` は恒等式です。しかし任意の二時刻間の距離は平均の差より大きいことがあります。累積確率 `F_k=sum_{n<=k}P_n` と確率流 `J_k=2 b_(k+1) chi_k chi_(k+1)` は `dF_k/dt=-J_k` を満たし、分布の順序条件が直線距離への等長埋込みを決めます。
 
 q=1をa固定で取るとPoisson分布となり、時刻順の直線性は厳密です。有限qでは厳密性が破れる例があり、距離行列の固有値解析と全時刻対の比較を実装しています。入力係数からの短時間展開、log-cosh近似のt^6でのずれ、Fisher計量とBerry曲率も元のノートで検証します。
 
@@ -47,9 +60,10 @@ python -m unittest discover -s tests -v
 OPENBLAS_NUM_THREADS=1 python src/krylov.py --output results
 OPENBLAS_NUM_THREADS=1 python src/geodesic.py --output results/geodesic
 OPENBLAS_NUM_THREADS=1 python src/state_distance.py --output results/state_distance
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/note.tex
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/geodesic.tex
-latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/state_distance.tex
+OPENBLAS_NUM_THREADS=1 python src/phase_space.py --output results/phase_space
+for topic in note geodesic state_distance phase_space; do
+    latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build "notes/${topic}.tex"
+done
 ```
 
 UbuntuではPDF用に `latexmk texlive-luatex texlive-lang-japanese texlive-latex-extra` を導入します。フォントは同梱しません。
@@ -60,7 +74,7 @@ UbuntuではPDF用に `latexmk texlive-luatex texlive-lang-japanese texlive-late
 
 Stefan Förste, Yannic Kruse, Saurabh Natu, *Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model*, [arXiv:2512.07715v2](https://arxiv.org/abs/2512.07715v2)。入力は式(3.33),(3.34)。
 
-Michał P. Heller, Jacopo Papalini, Tim Schuhmann, *Krylov spread complexity as holographic complexity beyond JT gravity*, [arXiv:2412.17785v2](https://arxiv.org/abs/2412.17785v2)。有限温度、基準状態、長さ演算子、有効計量との対応。
+Michał P. Heller, Jacopo Papalini, Tim Schuhmann, *Krylov spread complexity as holographic complexity beyond JT gravity*, [arXiv:2412.17785v2](https://arxiv.org/abs/2412.17785v2)。有限温度、基準状態、長さ演算子、有効計量、正準形式、左右固有関数と正規直交化の対応。
 
 Koji Hashimoto, Norihiro Tanahashi, *Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity*, [arXiv:2604.17649](https://arxiv.org/abs/2604.17649)。
 
