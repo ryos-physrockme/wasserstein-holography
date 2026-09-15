@@ -1,0 +1,319 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,bm,mathtools,booktabs,graphicx}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\dd}{\mathrm d}
+\title{fixed-charge complex SYKのcharged probeと\\charge-even / charge-odd分解}
+\author{研究ノート}
+\date{2026年9月16日}
+\begin{document}
+\maketitle
+\begin{abstract}
+complex Sachdev--Ye--Kitaev模型の固定電荷sectorで既知の二点関数を用い、
+probeの大きさと$U(1)$電荷に依存する二つの係数をcharge-even部分とcharge-odd部分に分解する。
+背景の電荷密度を$Q$、probeの$U(1)$電荷を$d$とすると、odd部分は$Qd$に比例し、
+$Q$または$d$の符号反転で符号が反転する。一方even部分は$Q^2$に比例する。
+neutral probeではodd部分が厳密に消えるため、neutralな長さprobeだけではbulk electric fieldの向きを識別できない。
+固定電荷表示の係数をgrand-canonical表示へ変換すると、Gubankova--Sachdev--Tarnopolskyの
+二点関数に現れるcharge-even / charge-odd係数と、規約をそろえた上で完全に一致する。
+さらにlightなunit-charge probeでは、固定電荷二点関数のasymmetry ratioが
+Green関数の端点値から得られる$(1-2Q)/(1+2Q)$に一致する。
+この結果は、gauge sectorを情報幾何の任意の接続から作るより、物理的$U(1)$電荷を持つprobeの
+charge-odd相関関数から読む方が自然であることを示す。
+ただし、本稿は既知の相関関数の係数を再整理したものであり、新しいholographic dualやMaxwell作用を導出するものではない。
+\end{abstract}
+\tableofcontents
+\clearpage
+
+\section{目的と用語}
+complex Sachdev--Ye--Kitaev模型、以下complex SYK模型は、多数の複素フェルミオンをランダムな多体相互作用で結合した量子力学模型である。
+複素フェルミオンの共通位相回転に対する$U(1)$対称性を持ち、その生成子が保存電荷である。
+保存電荷の固有値を固定したHilbert空間の部分空間をfixed-charge sectorと呼ぶ。
+
+本稿でいうprobeとは、背景状態の情報を読み出すために二点関数へ挿入する演算子である。
+probeが$U(1)$変換で位相を受けるとき、その係数をprobeの$U(1)$電荷と呼ぶ。
+背景電荷の符号を変えたときに変わらない量をcharge-even、符号が反転する量をcharge-oddと呼ぶ。
+これは新しい用語ではなく、電荷反転に対する通常の偶奇を表す。
+
+前ノートではneutralな長さ演算子$\hat\ell$とbilocal operator $e^{-\Delta\hat\ell}$を使った。
+neutralとは$U(1)$電荷が零であることを意味する。
+そこで得られる長さ分布、Wasserstein距離、Fisher--Rao距離、bilocal responseが、
+bulk gauge fieldの符号まで識別できるかが今回の問題である。
+
+\section{固定電荷complex SYKの二点関数に現れる係数}
+\subsection{Berkooz--Narovlansky--Rajの規約}
+Berkooz--Narovlansky--Rajはdouble-scaled complex SYKの二点関数を固定電荷sectorで厳密に求めている\cite{BNR}。
+彼らのHamiltonianでは、各相互作用項に$p$個のfermionと$p$個のantifermionが入る。
+本稿ではこの$p$を$p_{\rm B}$と書く。
+フェルミオンの総数を$N$とする。
+
+固定電荷sectorのラベルを$n$とすると、物理的な電荷密度は同論文の式(5.17)に従い
+\begin{equation}
+ Q=-\frac{n}{N},\qquad -\frac12<Q<\frac12
+ \label{eq:Q}
+\end{equation}
+である。
+probe演算子$M$に含まれるfermion数を$p_M$、antifermion数を$\bar p_M$とし、
+\begin{equation}
+ s=p_M+\bar p_M,\qquad d=p_M-\bar p_M
+ \label{eq:sd}
+\end{equation}
+と定義する。$s$はprobeの大きさ、$d$はその$U(1)$電荷に比例する量である。
+
+固定電荷二点関数では、Euclidean時間区間$\tau$と$\beta-\tau$に対応する二つのエネルギー係数へ、
+Berkooz--Narovlansky--Rajの式(7.21),(7.22)の
+\begin{align}
+ B_1&=\frac{p_{\rm B}p_M}{N}\frac{2n}{N-2n}
+ -\frac{p_{\rm B}\bar p_M}{N}\frac{2n}{N+2n},
+ \label{eq:B1}\\
+ B_2&=-\frac{p_{\rm B}p_M}{N}\frac{2n}{N+2n}
+ +\frac{p_{\rm B}\bar p_M}{N}\frac{2n}{N-2n}
+ \label{eq:B2}
+\end{align}
+が入る\cite{BNR}。
+二点関数の積分表示では、概略的に
+\begin{equation}
+ \exp\{-\tau E_1-(\beta-\tau)E_2\},\qquad
+ E_1\propto e^{B_1},\quad E_2\propto e^{B_2}
+ \label{eq:twosegments}
+\end{equation}
+という非対称性を作る。
+したがって$B_1-B_2$が、$\tau\leftrightarrow\beta-\tau$で反転する成分を制御する。
+
+\subsection{even / odd分解}
+\begin{equation}
+ B_{\rm even}=\frac{B_1+B_2}{2},\qquad
+ B_{\rm odd}=\frac{B_1-B_2}{2}
+ \label{eq:evenodddef}
+\end{equation}
+と定義する。式\eqref{eq:B1},\eqref{eq:B2}へ式\eqref{eq:sd}を代入すると
+\begin{align}
+ B_{\rm even}
+ &=\frac{4p_{\rm B}s\,n^2}{N(N^2-4n^2)},
+ \label{eq:evenn}\\
+ B_{\rm odd}
+ &=\frac{2p_{\rm B}d\,n}{N^2-4n^2}.
+ \label{eq:oddn}
+\end{align}
+式\eqref{eq:Q}で書き直せば
+\begin{align}
+ \boxed{B_{\rm even}
+ =\frac{4p_{\rm B}s}{N}\frac{Q^2}{1-4Q^2}},
+ \label{eq:evenQ}\\
+ \boxed{B_{\rm odd}
+ =-\frac{2p_{\rm B}d}{N}\frac{Q}{1-4Q^2}}.
+ \label{eq:oddQ}
+\end{align}
+従って$B_{\rm even}$は$Q\to-Q$で不変で、probeの大きさ$s$に依存する。
+$B_{\rm odd}$は$Q\to-Q$または$d\to-d$のどちらでも符号が反転する。
+特に
+\begin{equation}
+ d=0\quad\Longrightarrow\quad B_{\rm odd}=0
+ \label{eq:neutralzero}
+\end{equation}
+である。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.72\textwidth]{results/charged_probe/even_odd.pdf}
+ \caption{背景電荷密度$Q$に対するeven成分とodd成分の例。
+ even成分は$Q^2$型、odd成分は$Q$の符号を保持する。}
+ \label{fig:evenodd}
+\end{figure}
+
+\section{grand-canonical表示との規約を含む一致}
+\subsection{Gubankova--Sachdev--Tarnopolskyの係数}
+Gubankova--Sachdev--Tarnopolskyはcomplex SYKのlarge-$p$極限とdouble-scaling limitを比較し、
+charged operatorの二点関数について\cite{GST}
+\begin{equation}
+ B_1=B+\frac{\lambda_\mu}{4}\sinh(2\mu),\qquad
+ B_2=B-\frac{\lambda_\mu}{4}\sinh(2\mu),
+ \label{eq:GSTB12}
+\end{equation}
+\begin{equation}
+ B=-\frac{\widetilde\lambda}{4}\{1-\cosh(2\mu)\}
+ \label{eq:GSTB}
+\end{equation}
+と書いている。ここで$\mu$は同論文のdouble-scaled節でのchemical-potential変数である。
+Hamiltonianのサイズの規約が異なり、同論文の$p_{\rm G}$はfermionとantifermionを合わせた総数なので
+\begin{equation}
+ p_{\rm G}=2p_{\rm B}.
+ \label{eq:pmap}
+\end{equation}
+したがって
+\begin{equation}
+ \widetilde\lambda=\frac{p_{\rm G}s}{N}=\frac{2p_{\rm B}s}{N},\qquad
+ \lambda_\mu=\frac{p_{\rm G}d}{N}=\frac{2p_{\rm B}d}{N}.
+ \label{eq:lambdas}
+\end{equation}
+
+固定電荷射影の鞍点では、Berkooz--Narovlansky--Rajの式(5.6)から
+\begin{equation}
+ \tanh\mu=-2Q
+ \label{eq:mumap}
+\end{equation}
+が得られる。
+すると
+\begin{equation}
+ \cosh(2\mu)-1=\frac{8Q^2}{1-4Q^2},\qquad
+ \sinh(2\mu)=-\frac{4Q}{1-4Q^2}.
+ \label{eq:hyperbolic}
+\end{equation}
+式\eqref{eq:lambdas},\eqref{eq:hyperbolic}を式\eqref{eq:GSTB12},\eqref{eq:GSTB}へ代入すると
+\begin{align}
+ B&=\frac{4p_{\rm B}s}{N}\frac{Q^2}{1-4Q^2}=B_{\rm even},\\
+ \frac{\lambda_\mu}{4}\sinh(2\mu)
+ &=-\frac{2p_{\rm B}d}{N}\frac{Q}{1-4Q^2}=B_{\rm odd}.
+ \label{eq:exactmatch}
+\end{align}
+従って二つの計算のeven / odd係数は、規約をそろえると完全に一致する。
+これは本稿で新しく物理を導出したという意味ではなく、固定電荷表示とgrand-canonical表示の既知の式の間の整合性確認である。
+
+数値コードでは$-0.45\leq Q\leq0.45$を走査し、式\eqref{eq:exactmatch}の最大差は倍精度で$10^{-15}$以下であった。
+
+\section{二点関数のasymmetry ratio}
+Berkooz--Narovlansky--Rajはmoderate charge領域で、probeの時間順序を反転した二点関数の比として\cite{BNR}
+\begin{equation}
+ \log R_M
+ =d\left[
+ \log\frac{N+2n}{N-2n}
+ -\frac{4ns}{N^2-4n^2}
+ \right]
+ \label{eq:BNRratio}
+\end{equation}
+を得ている。式\eqref{eq:Q}を使えば
+\begin{equation}
+ \boxed{\displaystyle
+ \log R_M
+ =d\left[
+ \log\frac{1-2Q}{1+2Q}
+ +\frac{4Qs}{N(1-4Q^2)}
+ \right].}
+ \label{eq:ratioQ}
+\end{equation}
+この量も$Q$と$d$のそれぞれに対してoddである。
+neutral probe $d=0$では$R_M=1$となる。
+
+light probe、すなわち$s/N\to0$では
+\begin{equation}
+ R_M\longrightarrow
+ \left(\frac{1-2Q}{1+2Q}\right)^d.
+ \label{eq:lightratio}
+\end{equation}
+特にunit-charge probe $d=1$なら
+\begin{equation}
+ R_M=\frac{1-2Q}{1+2Q}.
+ \label{eq:unitratio}
+\end{equation}
+一方、Gubankova--Sachdev--Tarnopolskyのfermion Green関数の端点値は\cite{GST}
+\begin{equation}
+ G(0^+)=\frac12-Q,\qquad
+ G(\beta^-)=\frac12+Q
+ \label{eq:GSTendpoint}
+\end{equation}
+なので
+\begin{equation}
+ \frac{G(0^+)}{G(\beta^-)}
+ =\frac{1-2Q}{1+2Q}.
+ \label{eq:endpointratio}
+\end{equation}
+式\eqref{eq:unitratio}と一致する。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.72\textwidth]{results/charged_probe/asymmetry.pdf}
+ \caption{unit-charge probeのasymmetry。実線は式\eqref{eq:ratioQ}、破線はlight-probe極限。
+ 有限のprobe sizeによる補正はcharge-evenな大きさ情報との混合を表す。}
+ \label{fig:asymmetry}
+\end{figure}
+
+\section{bulk electric fieldとの関係}
+Gubankova--Sachdev--Tarnopolskyのlarge-$p$解では、fermion Green関数を
+$\tau\leftrightarrow\beta-\tau$に対してsymmetric部分とantisymmetric部分に分けると、
+charged caseには$Q$に線形なantisymmetric termが現れる\cite{GST}。
+同論文は二次元Einstein--Maxwell--dilaton理論との対応を構成し、symmetric部分をmetric、
+antisymmetric部分をelectric fieldへ対応させている。
+neutral caseではelectric fieldとgauge potentialが消える。
+
+本稿の式\eqref{eq:oddQ}は、この構造をprobe側から理解するための単純な指標になる。
+背景のelectric fieldの符号を反転する操作に対応して$Q$を反転すると、
+neutral probeは$B_{\rm even}$しか見ないので応答が変わらないが、charged probeは$B_{\rm odd}$の符号反転を検出する。
+これは通常の場の理論で、neutral matterはmetricを通じて電磁場のenergy densityに応答できても、
+$A_\mu$へのminimal coupling $q_{\rm probe}A_\mu$を持たないためfieldの向きを直接測れないことと同じ構造である。
+
+従って、前ノートで扱ったneutralな$e^{-\Delta\hat\ell}$だけからelectric fieldの向きを再構成しようとするのは不十分である。
+そのoperatorはcharge-even sectorに属する。
+必要なのは、物理的$U(1)$電荷を持つprobeを挿入し、そのcharge-odd二点関数を保持することである。
+
+\section{oriented chord formalismとの位置づけ}
+F\"orste--Kruse--Natuはdouble-scaled complex SYKのgrand-canonical transfer matrixをoriented chordで構成している\cite{FKN}。
+oriented chordとは、complex fermionの生成・消滅の向きを保持するchordであり、
+開いたchordの順序も補助Hilbert空間の状態に含める。
+彼らは、この形式の第一の目的としてcharged operator insertionを持つ相関関数を扱うためのmachineryを構築することを挙げている。
+一方、full double-scaled complex SYKのbulk interpretationとcharged insertionの完成形はfuture workとしている\cite{FKN}。
+
+重要なのは、complex SYKのcharged two-point function自体が未計算という意味ではないことである。
+Berkooz--Narovlansky--Rajはすでにfixed chemical potentialとfixed chargeの二点・四点関数を計算している\cite{BNR}。
+F\"orste--Kruse--Natuの新しい点は、grand-canonical transfer matrixをsectorごとに整理し、
+今後のcharged insertionとbulk interpretationに適したoriented chord Hilbert空間を作ることにある。
+
+従って次の技術的課題は、式\eqref{eq:B1},\eqref{eq:B2}のcharged matter insertionを
+F\"orste--Kruse--Natuのsymmetrized oriented-chord transfer matrix上の局所operatorとして表し、
+前ノートのbilocal generating function $\mathcal B_\Delta$をcharged版へ拡張することである。
+そのとき、charge-even部分が長さ・metric sectorを、charge-odd部分がelectric sectorをどのように分離するかを直接調べられる。
+
+\section{Wasserstein・Fisher・情報幾何への含意}
+今回の結果は、確率分布空間へ別のaffine connectionを選べばelectric fieldが創発する、という機構を支持しない。
+むしろ必要な偶奇構造は、境界理論が最初から持つ物理的$U(1)$対称性と、probeの$U(1)$電荷から出ている。
+
+Wasserstein距離はneutralな長さ分布の輸送を記述するのに有用であり、
+Fisher計量はthermal responseやcharge susceptibilityを整理するのに有用である。
+しかしelectric fieldの符号を識別する情報は、charge-oddな相関関数にある。
+この三つの役割を混同しない方がよい。
+
+したがって現時点の作業仮説は
+\begin{equation}
+ \begin{array}{rcl}
+ \text{charge-even length / correlator data}
+ &\longrightarrow& \text{metric・length sector},\\
+ \text{charge-odd charged-probe data}
+ &\longrightarrow& \text{gauge / electric sector},\\
+ \text{thermal response}
+ &\longrightarrow& \text{susceptibility・coupling data}
+ \end{array}
+ \label{eq:roles}
+\end{equation}
+である。
+第一・第二の対応には既存研究の裏付けがあるが、
+これらを一つのWasserstein reconstructionとして統合する部分はまだ未完成である。
+
+\section{再現計算}
+\texttt{src/charged\_probe.py}は式\eqref{eq:B1}--\eqref{eq:exactmatch}、
+charge parity、式\eqref{eq:ratioQ}--\eqref{eq:endpointratio}を数値検査する。
+\texttt{tests/test\_charged\_probe.py}は規約変換を含む一致を独立に検査する。
+代表的な走査ではeven / odd係数の二表示の最大差は$10^{-15}$以下であった。
+unit-charge light probeについて式\eqref{eq:unitratio}と式\eqref{eq:endpointratio}は倍精度で完全に一致した。
+この数値計算は代数恒等式の回帰テストであり、相関関数積分全体の独立再計算ではない。
+
+\begin{thebibliography}{9}
+\bibitem{BNR}
+M.~Berkooz, V.~Narovlansky and H.~Raj,
+\emph{Complex Sachdev--Ye--Kitaev model in the double scaling limit},
+JHEP 02 (2021) 113,
+\href{https://arxiv.org/abs/2006.13983}{arXiv:2006.13983 [hep-th]}.
+固定電荷の式(5.17)、二点関数の式(7.21)--(7.23)、asymmetryの式(7.43)を使用した。
+
+\bibitem{GST}
+E.~Gubankova, S.~Sachdev and G.~Tarnopolsky,
+\emph{Scaling limits of complex Sachdev--Ye--Kitaev models and holographic geometry},
+JHEP 03 (2026) 249,
+\href{https://arxiv.org/abs/2512.05294}{arXiv:2512.05294 [hep-th]}.
+式(2.4)、double-scaled二点関数の式(3.48)--(3.50)、およびantisymmetric Green functionとelectric fieldのbulk対応を参照した。
+
+\bibitem{FKN}
+S.~F\"orste, Y.~Kruse and S.~Natu,
+\emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model},
+\href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2 [hep-th]}.
+oriented chordとfixed-charge / grand-canonical transfer matrixの構成、およびcharged operator insertionを今後扱う目的を参照した。
+\end{thebibliography}
+\end{document}
