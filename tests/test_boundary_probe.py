@@ -51,7 +51,7 @@ class BoundaryProbeTests(unittest.TestCase):
         velocity=-1j*(K@psi)
         explicit=float(2*np.real(np.vdot(psi*ell,velocity)))
         self.assertAlmostEqual(length_velocity,explicit,places=12)
-        self.assertAlmostEqual(direct['hopping_generator'],direct['energy']-2/eps,places=12)
+        self.assertLess(abs(direct['hopping_generator']-(direct['energy']-2/eps)),1e-12)
 
     def test_finite_polynomial_uniqueness_demo(self):
         out=coefficient_uniqueness_demo(nlinks=7)
