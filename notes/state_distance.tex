@@ -1,0 +1,538 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,bm,mathtools,booktabs,graphicx}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\Tr}{\operatorname{Tr}}
+\title{長さの測定分布に基づく状態間距離\\熱的なchord状態の幅と位相の検証}
+\author{研究ノート}
+\date{2026年9月16日}
+\begin{document}
+\maketitle
+\begin{abstract}
+一般の二つの量子状態から得られる長さの測定分布に1-Wasserstein距離を入れ、
+平均長、分布の幅、相対位相のうち何を識別できるかを調べる。
+長さ演算子とchord数の既存の対応を仮定すると、この距離は長さの関数に限った観測量の期待値差として厳密に表せる。
+同じ平均長を持つ熱的準備状態の比較では、有限の距離が分布幅の差を検出する。
+調べた小変形の範囲では距離はほぼ$\sqrt\epsilon$に比例する一方、同じ分布間のFisher--Rao距離は非零の値に近づく。
+また、実Hamiltonianによる正負の時間発展は長さの分布が同一であっても、長さの変化率が逆符号となる。
+従って、いずれの古典的分布距離も位相に依存する動力学を単独では記述しない。
+輸送距離の双対表示、幅についての評価、不感な位相の存在は一般的な性質である。
+ここで行うのは既存の演算子対応を使った診断と再現可能な数値検証であり、新たな重力理論や電磁場の導出ではない。
+\end{abstract}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
+
+\section{問いと、比較する対象}
+ホログラフィーとは、重力を含む理論を、それより低い次元の量子理論によって記述する対応である。
+重力側の時空をbulk、低次元の量子系を置く側をboundaryと呼ぶ。
+Hashimoto--Tanahashiは、選んだ量子状態を確率分布に写し、その輸送距離から
+bulkの動径方向に対応する量を構成することを提案している\cite{HashimotoTanahashi}。
+一方、double-scaled Sachdev--Ye--Kitaev模型では、補助Hilbert空間の基底番号が
+重力側の長さ演算子に対応するという、別の既存の構成がある\cite{Heller}。
+
+本稿では後者の演算子対応を入力にし、単一の平均長だけでなく、一般の二状態間の距離を調べる。
+ここで区別すべき対象は三つある。第一は長さの測定結果を並べた半直線、
+第二は温度や時間によって指定する量子状態の集合、第三は重力側の時空である。
+測定結果の間の距離、量子状態の間の距離、時空内の二点間の測地線長は、定義の異なる量である。
+
+本稿で新たに実行する数値計算はHusimi $Q$分布を用いない。
+固定したchord基底での測定確率だけを使う。
+従って、後に見つかる情報の欠落が、そのままHusimi分布による構成への反例になるわけではない。
+また、比較する二状態ではHamiltonian、電荷sector、基底、長さの単位を共通にする。
+異なる電荷sectorの番号$n$を、追加の対応づけなしに同じ輸送空間へ載せることはしない。
+
+\section{模型、熱的準備、長さ演算子}
+\subsection{固定した補助Hilbert空間}
+complex Sachdev--Ye--Kitaev模型は、多数の複素フェルミオンをランダムな多体相互作用で結合した量子力学模型である。
+以下ではSachdev--Ye--KitaevをSYKと略記する。
+この模型の粒子数に対応する保存電荷を固定した部分空間を、固定電荷sectorと呼ぶ。
+相互作用次数とフェルミオンの種類の数を同時に大きくし、その比の一定の組合せを固定するdouble-scaling limitでは、
+乱数平均されたモーメントをchord diagramという図の数え上げで計算できる。
+chordは対になった相互作用の挿入を結ぶ線であり、物理空間内の線分ではない。
+
+途中で閉じていないchordの本数を$n=0,1,\ldots$とし、
+対応する正規直交基底を$\ket n$と書く。
+この基底は基準状態$\ket0$にHamiltonianを繰り返し作用させて得るKrylov基底でもある。
+Krylov基底とは、そのベクトル列を直交化して作った基底である。
+固定電荷模型の入力係数\cite{Forste}を、正のエネルギー尺度$B$と無次元量$\epsilon>0$を使って
+\begin{align}
+ H_{\rm K}\ket n&=b_{n+1}\ket{n+1}+b_n\ket{n-1},\qquad b_0=0,
+ \label{eq:ham}\\
+ b_n&=B\sqrt{1-e^{-\epsilon n}},\qquad
+ q=e^{-\epsilon},\qquad \Omega=\epsilon B
+ \label{eq:parameters}
+\end{align}
+と定義する。$\Omega$もエネルギーの次元を持つ。
+$\hbar=k_{\rm B}=1$とするので、時間と逆温度の次元はともにエネルギーの逆数である。
+別の規約$b_n=a\sqrt{(1-q^n)/(1-q)}$では$B=a/\sqrt{1-q}$である。
+
+\subsection{熱的準備と実時間発展}
+逆温度を$\beta=1/T$として、状態を
+\begin{equation}
+ \ket{\psi_\beta(t)}=Z_\beta^{-1/2}
+ e^{-\ii H_{\rm K}t}e^{-\beta H_{\rm K}/2}\ket0,
+ \qquad Z_\beta=\bra0e^{-\beta H_{\rm K}}\ket0
+ \label{eq:thermalstate}
+\end{equation}
+で定義する。$e^{-\beta H_{\rm K}/2}$は高エネルギー成分を抑える熱的準備であり、
+その後に$e^{-\ii H_{\rm K}t}$で実時間発展する。
+準備後に基底を作り直すことはせず、$\ket0$を基準とした同じ基底を使う。
+この基準状態の選択は、既存の長さ対応の一部である\cite{Heller}。
+$\ket{\psi_\beta(t)}$は補助Hilbert空間の純粋状態であって、
+同じ空間のGibbs密度演算子そのものではない。
+
+数値実装では$D\ket n=(-1)^n\ket n$というユニタリ変換とエネルギー原点の移動を用い、
+\begin{equation}
+ K=D H_{\rm K}D+2B I=2B I-H_{\rm K}
+ \label{eq:shift}
+\end{equation}
+を使う。$K$は実対称で、隣接成分が$-b_n$の行列である。
+この変換は基底測定の確率を変えない。以後の位相に関する数値例も、この同じ基底規約で評価する。
+
+\subsection{長さの分布と平均}
+無次元の長さ演算子を
+\begin{equation}
+ \hat\ell=\epsilon\hat n,\qquad \hat n\ket n=n\ket n
+ \label{eq:lengthoperator}
+\end{equation}
+と定義する。既存の重力側の演算子対応では、物質の伝播を支配する有効計量の長さ演算子をこの量と同定する\cite{Heller}。
+同文献の変形パラメータを$q_{\rm H}$と区別すれば、本稿の$q=q_{\rm H}^2$であり、
+$2|\log q_{\rm H}|n=\epsilon n$となる。長さの加法定数と単位は全状態で共通に固定する。
+固定電荷sectorへのこの同定は、共通形式のHamiltonianを介した条件付きの適用である。
+全電荷sectorを一つの荷電重力作用に組み込む構成は、本稿では導出しない。
+
+一般の密度演算子$\rho$は、正で$\Tr\rho=1$を満たす演算子である。
+長さの測定確率と、その平均・分散を
+\begin{align}
+ P_n^\rho&=\bra n\rho\ket n,\qquad \ell_n=\epsilon n,
+ \label{eq:probability}\\
+ m_\rho&=\sum_n\ell_nP_n^\rho=\Tr(\rho\hat\ell),\qquad
+ \sigma_\rho^2=\sum_n(\ell_n-m_\rho)^2P_n^\rho
+ \label{eq:moments}
+\end{align}
+とする。$\sigma_\rho$は長さの揺らぎの標準偏差である。
+重力側との演算子対応を使うことと、平均長を古典的な一つの測地線で近似することは別の段階である。
+
+\section{一般の二状態間の輸送距離は何を測るか}
+\subsection{定義と厳密な双対表示}
+二つの密度演算子$\rho,\sigma$から、同じ長さ測定の分布$P^\rho,P^\sigma$を得る。
+$n$から$m$へ運ぶ確率を$\pi_{nm}\geq0$とし、輸送前後の周辺分布を固定して
+\begin{align}
+ \mathsf D_\ell(\rho,\sigma)
+ &=\inf_\pi\sum_{n,m}|\ell_n-\ell_m|\pi_{nm},
+ \label{eq:distance}\\
+ \sum_m\pi_{nm}&=P_n^\rho,\qquad \sum_n\pi_{nm}=P_m^\sigma
+ \label{eq:coupling}
+\end{align}
+と定義する。これは長さの半直線上の1-Wasserstein距離であり、
+整数番号上のコスト$|n-m|$による距離の$\epsilon$倍である。
+以下では少なくとも平均長が有限である状態を扱う。
+
+長さが$\ell_k$より大きい確率の差を
+\begin{equation}
+ s_k=\sum_{n>k}(P_n^\rho-P_n^\sigma)
+ \label{eq:taildifference}
+\end{equation}
+とすると、一次元の輸送公式は
+\begin{equation}
+ \mathsf D_\ell(\rho,\sigma)=\epsilon\sum_{k\geq0}|s_k|
+ \label{eq:tails}
+\end{equation}
+となる。これを観測量の期待値差として表せる。
+長さの関数$f$の隣接値に
+\begin{equation}
+ |f(\ell_{k+1})-f(\ell_k)|\leq\epsilon
+ \label{eq:lipschitz}
+\end{equation}
+を課す。これは長さが$\delta\ell$変わったとき、$f$の変化が$|\delta\ell|$を超えないという
+1-Lipschitz条件の格子上での形である。
+$f(0)=0$としても、規格化された二状態間の期待値差は変わらない。
+
+$f(\hat\ell)$は、$\ket n$で測定した値に$f$を適用する対角演算子である。
+離散的な部分積分により、
+\begin{equation}
+ \Tr[(\rho-\sigma)f(\hat\ell)]
+ =\sum_{k\geq0}s_k\{f(\ell_{k+1})-f(\ell_k)\}
+ \label{eq:summation}
+\end{equation}
+を得る。右辺の絶対値は式\eqref{eq:tails}以下であり、
+\begin{equation}
+ f(\ell_{k+1})-f(\ell_k)=\epsilon\operatorname{sgn}(s_k)
+ \label{eq:optimalfunction}
+\end{equation}
+を選べば上限を達成する。従って
+\begin{equation}
+ \mathsf D_\ell(\rho,\sigma)
+ =\sup_{f:\,\text{式}\eqref{eq:lipschitz}}
+ \left|\Tr[(\rho-\sigma)f(\hat\ell)]\right|
+ \label{eq:dual}
+\end{equation}
+である。これはKantorovich--Rubinstein双対表示の本設定での直接的な導出である。
+
+式\eqref{eq:dual}により、一般の二状態間の距離にも重力側の意味を与えられる。
+既存の長さ演算子対応を受け入れたうえで、\emph{長さの関数に限定した観測量で、二つの重力量子状態をどれだけ区別できるか}を測る量である。
+一つの時空内の二点を結ぶ新しい測地線を構成したわけではない。
+また、全ての量子観測量による識別可能性を測るわけでもない。
+
+\subsection{平均長と分布幅を分ける評価}
+式\eqref{eq:dual}で$f(\ell)=\ell$を選べば
+\begin{equation}
+ |m_\rho-m_\sigma|\leq\mathsf D_\ell(\rho,\sigma)
+ \label{eq:meanlower}
+\end{equation}
+となる。一方、$m_\rho$と$m_\sigma$に全確率が集中する二つの点分布を中継する三角不等式から、
+\begin{align}
+ \mathsf D_\ell(\rho,\sigma)
+ &\leq|m_\rho-m_\sigma|
+ +\sum_n|\ell_n-m_\rho|P_n^\rho
+ +\sum_n|\ell_n-m_\sigma|P_n^\sigma
+ \label{eq:concentration}\\
+ &\leq|m_\rho-m_\sigma|+\sigma_\rho+\sigma_\sigma
+ \label{eq:variancebound}
+\end{align}
+を得る。最後はCauchy--Schwarzの不等式による。
+点分布の位置は元の格子上にない場合もあるが、格子を含む実半直線上で中継すればよい。
+
+従って、両方の長さ分布が十分狭くなれば、距離は平均長の差へ近づく。
+これは確率分布の順序条件を必要としない上界である。
+厳密な平均差との一致は順序条件によるが、\emph{近似的な一致}は分布の集中だけでも説明できる。
+二状態の平均が等しくても、幅や形が異なれば一般には距離は非零である。
+
+\section{同じ平均長で異なる熱的準備を比較する}
+\subsection{数値実験の定義}
+$\Omega=1$をエネルギー単位として、同じHamiltonianについて
+\begin{equation}
+ \rho_A=\ket{\psi_{\beta_A}(t_A)}\bra{\psi_{\beta_A}(t_A)},\qquad
+ \rho_B=\ket{\psi_{\beta_B}(0)}\bra{\psi_{\beta_B}(0)},\qquad
+ \beta_A\Omega=5,\quad\beta_B\Omega=10
+ \label{eq:pair}
+\end{equation}
+を考える。$A,B$はこの二状態を区別するためだけの添字である。
+各$\epsilon$で
+\begin{equation}
+ m_A(t_A)=m_B(0)
+ \label{eq:matchmean}
+\end{equation}
+を満たす正の$t_A$を、量子時間発展の結果を使って決める。
+この調整は同じ平均を比較するための条件であり、重力側の時間単位をフィットしたものではない。
+
+既存の半古典式は、$u\in(0,\pi/2]$を
+\begin{equation}
+ \beta\Omega\sin u=\pi-2u
+ \label{eq:saddle}
+\end{equation}
+で決めたとき、
+\begin{equation}
+ m_{\rm cl}(\beta,t)=-2\log\sin u+2\log\cosh(\Omega t\sin u)
+ \label{eq:classical}
+\end{equation}
+となる\cite{Heller}。
+これは量子分布の幅を無視した先頭次数の式であり、厳密解ではない。
+式\eqref{eq:matchmean}をこの近似内で解くと
+\begin{equation}
+ \Omega t_{A,\rm cl}
+ =\frac{\operatorname{arcosh}(\sin u_A/\sin u_B)}{\sin u_A}
+ =2.5287280457\ldots
+ \label{eq:classicalmatch}
+\end{equation}
+である。表の量子計算の$t_A$は、この値へ近づいている。
+
+\subsection{距離とFisher--Rao幾何}
+同じ二つの確率分布に、Fisher--Rao距離も入れる。
+Fisher計量の規約を$\dd s^2=\sum_n(\dd P_n)^2/P_n$とすると、
+全ての確率分布を通ることを許した最短距離は
+\begin{equation}
+ d_{\rm FR}(P,R)=2\arccos\sum_n\sqrt{P_nR_n}
+ \label{eq:fisherrao}
+\end{equation}
+である。$2\sqrt{P_n}$を座標とすれば、規格化条件が半径2の球面を定めるため、この式を得る。
+特定の温度・時間の曲線上だけを通る長さとは異なる。
+
+\begin{table}[htbp]
+ \centering\small
+ \input{results/state_distance/equal_mean_table.tex}
+ \caption{同じ平均長の二状態の距離。$\Omega$固定で$\epsilon$を変える。
+ Gaussian近似の偏差は式\eqref{eq:gaussianw1}を分母とした相対偏差であり、幅は量子分布から測定する。
+ ここでの$q\to1$は、$a=b_1$を固定してPoisson分布へ移る極限とは異なる。}
+ \label{tab:equalmean}
+\end{table}
+
+例えば$\epsilon=0.02$では、
+\begin{align}
+ m_A=m_B&\simeq2.691783866,\qquad
+ \sigma_A\simeq0.206392082,\qquad\sigma_B\simeq0.216495351,
+ \label{eq:examplemoments}\\
+ \mathsf D_\ell(\rho_A,\rho_B)&\simeq0.0080674790,\qquad
+ d_{\rm FR}\simeq0.0676651645.
+ \label{eq:exampledistances}
+\end{align}
+平均差だけを長さの指標とすれば零だが、輸送距離は二つの幅の違いを検出する。
+今回の4点では$\mathsf D_\ell/\sqrt\epsilon$がほぼ一定で、Fisher--Rao距離もほぼ一定である。
+これだけから厳密な$\epsilon\to0$の漸近定理を主張することはしない。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.76\textwidth]{results/state_distance/equal_mean_scaling.pdf}
+ \caption{同じ平均長の二状態間の輸送距離。破線は実際の分布から得た標準偏差を用いるGaussian公式であり、
+ その標準偏差自体を独立に理論予測したものではない。}
+ \label{fig:scaling}
+\end{figure}
+
+\subsection{Gaussian近似での解釈}
+実数直線上で、同じ平均$m$、異なる標準偏差$\sigma_A,\sigma_B$の正規分布を考える。
+標準正規変数を$Z$とし、$m+\sigma_AZ$と$m+\sigma_BZ$を組にして輸送する。
+一次元の単調な組合せが最適輸送なので、
+\begin{equation}
+ \mathsf D_{\ell,{\rm G}}
+ =\mathbb E|\sigma_AZ-\sigma_BZ|
+ =\sqrt{\frac2\pi}|\sigma_A-\sigma_B|
+ \label{eq:gaussianw1}
+\end{equation}
+である。添字${\rm G}$は正規分布で評価した値を表す。
+また、式\eqref{eq:fisherrao}の積分を実行すれば
+\begin{equation}
+ d_{{\rm FR},{\rm G}}
+ =2\arccos\sqrt{\frac{2\sigma_A\sigma_B}{\sigma_A^2+\sigma_B^2}}
+ \label{eq:gaussianfisher}
+\end{equation}
+を得る。
+
+標準偏差が$\sigma_A=c_A\sqrt\epsilon$、$\sigma_B=c_B\sqrt\epsilon$と小さくなる場合、
+式\eqref{eq:gaussianw1}は$\sqrt\epsilon$に比例するが、式\eqref{eq:gaussianfisher}は幅の比$c_A/c_B$だけに依存する。
+従って、絶対的な長さの揺らぎが小さくなることと、確率分布の統計的な区別が消えることは同じではない。
+ここで使用する正規分布は実直線上にあるが、今回の測定分布は平均が標準偏差より十分大きく、
+負の長さへの正規分布の裾は小さい。
+
+図\ref{fig:width}は$y=(\ell-m)/\sqrt\epsilon$という共通の変数へ拡大した分布である。
+平均からの幅を拡大して見ると、異なる$\epsilon$で状態$A$の形はよく重なり、状態$B$との幅の差が残る。
+輸送距離はこの共通の長さ拡大・縮小に比例するが、式\eqref{eq:fisherrao}は測定結果の可逆な座標変更で変わらない。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.80\textwidth]{results/state_distance/rescaled_distributions.pdf}
+ \caption{平均長を中心に幅を$\sqrt\epsilon$で拡大した分布。
+ 格子上の確率を格子幅$\sqrt\epsilon$で割って、$y$に対する密度として表示した。
+ 同じ平均長を持つ状態$B$は、状態$A$よりわずかに広い。}
+ \label{fig:width}
+\end{figure}
+
+\section{同じ分布でも、長さが増える状態と減る状態は異なる}
+\subsection{位相の欠落は距離関数の変更では直らない}
+任意の実数列$\theta_n$に対して
+\begin{equation}
+ U_\theta=\sum_n e^{\ii\theta_n}\ket n\bra n
+ \label{eq:phaseunitary}
+\end{equation}
+を考える。$\rho$と$U_\theta\rho U_\theta^\dagger$の長さ測定分布は同一である。
+そのため、どちらの分布距離も零になる。
+\begin{equation}
+ \mathsf D_\ell(\rho,U_\theta\rho U_\theta^\dagger)=0,
+ \qquad d_{\rm FR}(P^\rho,P^{U_\theta\rho U_\theta^\dagger})=0.
+ \label{eq:phaseblind}
+\end{equation}
+一般には全体位相だけの変更ではなく、相対位相が変化して異なる量子状態になる。
+
+従って$\mathsf D_\ell$は分布の集合では距離であるが、量子状態全体の集合では擬距離である。
+擬距離とは、異なる対象間の値も零になり得る点を除いて、距離の条件を満たすものである。
+長さの測定確率が同じ状態を同一視した集合に対しては距離になる。
+古典的なFisher--Rao距離へ変更しても、測定で既に落とした位相は回復しない。
+
+\subsection{正負の時間で得られる具体的な二状態}
+式\eqref{eq:shift}の$K$は実行列で、準備したベクトル
+$\ket{\psi_\beta(0)}\propto e^{-\beta K/2}\ket0$も実である。
+従って、この基底に関する複素共役を$*$と書けば
+\begin{equation}
+ \psi_{\beta,n}(-t)=\psi_{\beta,n}(t)^*,\qquad
+ P_{\beta,n}(-t)=P_{\beta,n}(t)
+ \label{eq:reversal}
+\end{equation}
+が厳密に成り立つ。これは補助Hamiltonianの実数性からの帰結であり、
+微視的なcomplex SYK模型全体の時間反転対称性を追加仮定したものではない。
+電荷反転でもなく、同じ固定電荷sector内の比較である。
+
+隣接する番号$k\to k+1$へ流れる確率流を
+\begin{equation}
+ J_k(t)=2b_{k+1}\operatorname{Im}\{
+ \psi_{\beta,k}(t)^*\psi_{\beta,k+1}(t)\}
+ \label{eq:current}
+\end{equation}
+と定義する。この符号は$K$の隣接行列要素が$-b_{k+1}$である規約に対応する。
+Schr\"odinger方程式から
+\begin{equation}
+ \dot P_n=J_{n-1}-J_n,\qquad
+ \dot m=\epsilon\sum_{k\geq0}J_k
+ \label{eq:continuity}
+\end{equation}
+を得る。式\eqref{eq:reversal}は$J_k(-t)=-J_k(t)$を意味するので、
+\begin{equation}
+ m(-t)=m(t),\qquad \dot m(-t)=-\dot m(t)
+ \label{eq:velocities}
+\end{equation}
+である。同じ長さ分布であっても、将来その長さが増えるか減るかは異なる。
+
+二つの純粋状態の量子fidelityを
+\begin{equation}
+ \mathcal F_{\rm q}(\psi,\phi)=|\langle\psi|\phi\rangle|^2
+ \label{eq:fidelity}
+\end{equation}
+と定義する。値が1なら同じ状態、0なら直交状態である。
+正負の時間の状態間では
+\begin{equation}
+ \mathcal F_{\rm q}(+t,-t)
+ =\left|\frac{Z_K(\beta+2\ii t)}{Z_K(\beta)}\right|^2,
+ \qquad Z_K(z)=\bra0 e^{-zK}\ket0
+ \label{eq:fidelitypartition}
+\end{equation}
+となり、一般には1ではない。
+右辺の符号を複素共役に変えても絶対値の二乗は同じである。
+
+\begin{table}[htbp]
+ \centering\small
+ \input{results/state_distance/time_reversal_table.tex}
+ \caption{$\beta\Omega=10$、$t\Omega=1$での正負時間状態の比較。
+ その後、両状態を同じ正の時間$\delta t\,\Omega=0.2$だけ発展させる。
+ 初期の零は解析的に厳密であり、計算でも同じ確率を与える。
+ $\dot m(-t)$は表の変化率の負値である。}
+ \label{tab:reverse}
+\end{table}
+
+例えば$\epsilon=0.02$では、距離は零でも$\mathcal F_{\rm q}\simeq0.09819$で、
+平均長の変化率は$\dot m/\Omega\simeq\pm0.13431$である。
+両状態を共通に$\delta t\,\Omega=0.2$だけ時間発展させると、輸送距離は$0.05368$程度まで増える。
+量子fidelityは共通のユニタリ時間発展では変わらず、コードでも検査している。
+
+この例は、長さ分布だけから将来の長さ分布を決める閉じた動力学が、一般の状態については存在しないことも示す。
+同一の入力分布に対して、相対位相が違えば$\dot P_n$が違うからである。
+位相あるいは確率流などの追加データが必要になる。
+重力側の既存の正準形式でも、長さとその共役運動量を組にしてHamiltonianを記述する\cite{Heller}。
+共役運動量とは、正準形式で長さと対をなす力学変数であり、長さの時間変化にも関わる。
+この追加自由度を電磁場と同一視する根拠は、本計算からは得られない。
+
+\section{重力側の二点関数からどこまで距離が分かるか}
+既存の長さ演算子対応では、正のパラメータ$\Delta$に対して
+\begin{equation}
+ G_\rho(\Delta)=\Tr\{\rho e^{-\Delta\hat\ell}\}
+ =\sum_nP_n^\rho e^{-\Delta\epsilon n}
+ \label{eq:probe}
+\end{equation}
+という量が現れる。$e^{-\Delta\hat\ell}$は、boundary上の二点を結ぶ物質の伝播を表す演算子として解釈される\cite{Heller}。
+ここではその演算子を使い、二つの状態$\rho,\sigma$での期待値を比較する。
+「二点」は一つの状態におけるboundaryの二つの挿入点を指し、「二状態」とは区別する。
+
+共通の長さ原点を$\ell\geq0$に選んだ本稿では、
+$f(\ell)=e^{-\Delta\ell}/\Delta$の傾きの絶対値は1以下である。
+従って式\eqref{eq:dual}より
+\begin{equation}
+ \frac{|G_\rho(\Delta)-G_\sigma(\Delta)|}{\Delta}
+ \leq\mathsf D_\ell(\rho,\sigma),\qquad \Delta>0
+ \label{eq:probebound}
+\end{equation}
+となる。つまり、既存の二点関数の差から距離の下界を得られる。
+ただし一つの$\Delta$の値だけでは距離そのものは決まらない。
+
+$z=e^{-\Delta\epsilon}\in(0,1)$と書けば、$G_\rho$は
+\begin{equation}
+ \mathcal G_\rho(z)=\sum_{n\geq0}P_n^\rho z^n
+ \label{eq:generatingfunction}
+\end{equation}
+という確率生成関数である。
+理想的にこの関数を正確に全て知っていれば、係数として長さの分布を復元できる。
+しかし有限個の$\Delta$と有限精度の情報からの復元は別の逆問題であり、
+本稿ではその安定性を示していない。何より、全ての$G_\rho(\Delta)$を知っても、長さ基底の非対角成分は戻らない。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.75\textwidth]{results/state_distance/optimal_observable.pdf}
+ \caption{$\epsilon=0.02$の同平均ペアについて式\eqref{eq:optimalfunction}で作った最適な長さの関数。
+ 定数部分は期待値差に影響しない。平均付近で傾きが変わり、幅の違いを検出する。
+ 正規分布が同じ平均を持つ場合には、絶対偏差$|\ell-m|$を測ることが最適輸送距離を再現する。}
+ \label{fig:observable}
+\end{figure}
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.75\textwidth]{results/state_distance/probe_bound.pdf}
+ \caption{同じペアに対する式\eqref{eq:probebound}の下界を、実際の距離で割った比。
+ 探索した$0.02\leq\Delta\leq10$では最も良い下界も距離の約3.6\%である。
+ 単一の指数関数の観測量は、最適なLipschitz関数より幅の差に鈍感である。}
+ \label{fig:probe}
+\end{figure}
+
+例えば$\Delta=1$、$\epsilon=0.02$では$G_A-G_B\simeq-1.45257\times10^{-4}$で、
+距離$0.00806748$よりかなり小さい。
+同平均の狭い正規分布では
+\begin{equation}
+ G_A(\Delta)-G_B(\Delta)
+ \simeq\frac{\Delta^2}{2}e^{-\Delta m}(\sigma_A^2-\sigma_B^2)
+ \label{eq:probegaussian}
+\end{equation}
+である。分散が$O(\epsilon)$なら、固定した$\Delta$の差は$O(\epsilon)$であり、
+幅の差を直接検出する$O(\sqrt\epsilon)$の輸送距離より早く小さくなる。
+これは正規分布での説明であって、任意の量子状態に対する漸近則ではない。
+
+\section{計算方法、誤差、適用範囲}
+基底を$n=0,\ldots,M$で打ち切り、疎行列の指数関数で熱的準備と実時間発展を計算した。
+$M=\lceil18/\epsilon\rceil$と$2M$を独立に使い、各打切りで同平均条件も解き直した。
+熱的準備ではアンダーフローを避けるため途中で規格化し、実時間発展の確率は規格化し直さない。
+Fisher--Rao距離と量子fidelityの評価に限って、規格化された内積比を使う。
+確率総和のずれは別途記録する。
+
+今回の同平均ペアでは、平均差の残差は約$1.4\times10^{-12}$以下、
+打切りを倍にしたときの輸送距離の変化は約$1.0\times10^{-12}$以下であった。
+同平均を達成する時間の変化は約$2.5\times10^{-12}/\Omega$以下である。
+確率総和の最大のずれは、正負時間ペアも含めて約$2.4\times10^{-11}$であった。
+式\eqref{eq:dual}で計算する最適な観測量の期待値差と輸送距離の残差は約$1.3\times10^{-16}$以下である。
+これらは誤差の事後的な検査であり、浮動小数点計算全体に対する厳密な保証ではない。
+
+独立の検査として、小さな確率分布の輸送問題を線形計画法でも解き、
+累積確率公式・最適な観測量との一致を確認した。
+時間発展は密行列指数関数との比較を含み、確率流からの$\dot m$、有限差分による$\dot m$、
+共通の時間発展でのfidelity保存も検査する。
+量子状態が異なるのに測定分布が同じという結果は解析的に厳密であり、数値誤差による零ではない。
+
+本稿の新しい実装は\texttt{src/state\_distance.py}、
+テストは\texttt{tests/test\_state\_distance.py}である。
+\texttt{results/state\_distance/}に、要約JSON、数値表CSV、分布と最適な観測量のCSV、図を保存する。
+研究ノートのソースは\texttt{notes/state\_distance.tex}、PDFは\texttt{docs/state\_distance.pdf}である。
+GitHub Actionsは既存のノートを保持したまま、全テスト・再計算・三つのPDFのコンパイルを行う。
+
+\section{結論と残る問題}
+一般の二状態間のWasserstein距離について、既存の演算子対応の範囲で、
+長さの関数に限った観測量による識別可能性という意味を与えた。
+平均長の差へ近づく条件には、確率分布の厳密な順序に加えて、分布幅が小さくなることも関わる。
+同平均の熱的状態では、Wasserstein距離は絶対的な長さの幅の差を検出し、
+Fisher--Rao距離は幅の比が異なることを検出する。
+これらは競合する重力計量の候補であると結論するよりも、異なる区別の尺度として扱うべきである。
+
+一方、長さ基底の相対位相は両方の分布距離に見えない。
+正負の時間の状態は、同じ長さ分布を持ちながら逆向きの確率流を持つ。
+従って、長さの測定分布だけで重力量子状態やその時間発展を完全に記述することはできない。
+電磁場が自動的に創発するという結論も得られない。
+
+次に進むうえで必要なのは、任意の接続を追加することではなく、
+長さに加えてどの物理的な観測量を保持するかを決めることである。
+本Hamiltonianで直接検査できる追加量は、確率流または長さの変化率である。
+それらと長さの共役運動量との対応を、既存の重力Hamiltonianから確認することが、
+状態間の区別と重力側の動力学を結びつけるための次の課題になる。
+
+\begin{thebibliography}{9}
+\bibitem{Heller}
+M.~P.~Heller, J.~Papalini and T.~Schuhmann,
+\emph{Krylov spread complexity as holographic complexity beyond JT gravity},
+\href{https://arxiv.org/abs/2412.17785v2}{arXiv:2412.17785v2 [hep-th]}.
+長さ演算子、熱的準備、有効計量、長さの指数関数による二点関数の対応を使用した。
+\bibitem{Forste}
+S.~F\"orste, Y.~Kruse and S.~Natu,
+\emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model},
+\href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2 [hep-th]}.
+固定電荷sectorの入力係数について式(3.33),(3.34)を基準とする。
+\bibitem{HashimotoTanahashi}
+K.~Hashimoto and N.~Tanahashi,
+\emph{Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity},
+\href{https://arxiv.org/abs/2604.17649v1}{arXiv:2604.17649v1 [hep-th]}.
+本稿とは確率分布の表現が異なる。
+\end{thebibliography}
+\end{document}

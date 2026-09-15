@@ -6,9 +6,20 @@
 
 - 距離行列・確率流・Fisher計量・Berry曲率：[日本語PDF](docs/note.pdf)、[LaTeX](notes/note.tex)。
 - 有限温度のchord分布と二境界間の測地線長：[追補PDF](docs/geodesic.pdf)、[LaTeX](notes/geodesic.tex)。
+- 一般の二状態間の距離、分布の幅、位相の欠落：[追補PDF](docs/state_distance.pdf)、[LaTeX](notes/state_distance.tex)。
 - [自動検証とPDF生成の実行履歴](https://github.com/ryos-physrockme/wasserstein-holography/actions)。
 
-追補も独立して読めるように定義と規約を記載しています。以前の研究ノートは保持しています。ソース更新時にGitHub Actionsがテスト、数値再計算、両PDFのコンパイルを行い、`docs/`と`results/`を更新します。最新のビルドが未完了の場合、PDF・結果の更新はソースより遅れます。
+追補も独立して読めるように定義と規約を記載しています。以前の研究ノートは保持しています。ソース更新時にGitHub Actionsがテスト、数値再計算、三つのPDFのコンパイルを行い、`docs/`と`results/`を更新します。最新のビルドが未完了の場合、PDF・結果の更新はソースより遅れます。
+
+## 一般の二状態間の距離
+
+同じHamiltonian・基底・長さ演算子 `ell=epsilon*n` を使い、異なる温度・時間で準備した状態を比較します。長さの測定分布のWasserstein距離は、傾きの絶対値が1以下の長さの関数に限定した観測量による期待値差の上限に等しい。この双対表示を離散的な部分積分で導出し、最適な観測量も数値的に構成します。
+
+同じ平均長の熱的状態では、距離は幅の違いを検出します。調べた `epsilon=0.05,0.02,0.01,0.005`、`beta_A*Omega=5`、`beta_B*Omega=10` ではWasserstein距離はほぼsqrt(epsilon)に比例し、Fisher–Rao距離は約0.067にとどまります。Gaussian公式は測定した幅による説明であり、幅の独立な理論予測や厳密な漸近定理ではありません。
+
+同じ熱的状態から正負の時間で作る二状態は、実Hamiltonianのもとで長さ分布が厳密に同じですが、長さの変化率は逆符号です。Wasserstein距離も古典的Fisher–Rao距離も、測定で落とした相対位相を復元しません。既存の長さ演算子対応に基づく限定された状態の区別であり、一般の時空測地線や電磁場の導出とは区別します。
+
+`src/state_distance.py`、`tests/test_state_distance.py`、`results/state_distance/` に実装・検査・分布CSV・最適な観測量・図・誤差を保存します。熱的準備後の基底は作り直さず、実時間確率は再規格化しません。打切りを倍にした比較、独立の輸送線形計画法、密行列指数関数、確率流・fidelity保存の検査を含みます。
 
 ## 有限温度での比較
 
@@ -35,8 +46,10 @@ python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 OPENBLAS_NUM_THREADS=1 python src/krylov.py --output results
 OPENBLAS_NUM_THREADS=1 python src/geodesic.py --output results/geodesic
+OPENBLAS_NUM_THREADS=1 python src/state_distance.py --output results/state_distance
 latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/note.tex
 latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/geodesic.tex
+latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/state_distance.tex
 ```
 
 UbuntuではPDF用に `latexmk texlive-luatex texlive-lang-japanese texlive-latex-extra` を導入します。フォントは同梱しません。

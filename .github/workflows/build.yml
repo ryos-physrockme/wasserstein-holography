@@ -36,6 +36,7 @@ jobs:
         run: |
           python src/krylov.py --output results
           python src/geodesic.py --output results/geodesic
+          python src/state_distance.py --output results/state_distance
       - name: Install LuaLaTeX and Japanese typesetting
         run: |
           sudo apt-get update
@@ -44,6 +45,7 @@ jobs:
         run: |
           latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/note.tex
           latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/geodesic.tex
+          latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build notes/state_distance.tex
       - name: Upload PDF and verification results
         uses: actions/upload-artifact@v4
         with:
@@ -51,6 +53,7 @@ jobs:
           path: |
             build/note.pdf
             build/geodesic.pdf
+            build/state_distance.pdf
             results/
           if-no-files-found: error
           retention-days: 90
@@ -66,9 +69,10 @@ jobs:
           mkdir -p docs
           cp build/note.pdf docs/note.pdf
           cp build/geodesic.pdf docs/geodesic.pdf
+          cp build/state_distance.pdf docs/state_distance.pdf
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/note.pdf docs/geodesic.pdf results/
+          git add docs/note.pdf docs/geodesic.pdf docs/state_distance.pdf results/
           if ! git diff --cached --quiet; then
             git commit -m 'Build research note and refresh verification results'
             git push origin HEAD:main
