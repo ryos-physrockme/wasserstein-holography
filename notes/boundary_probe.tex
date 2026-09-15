@@ -1,0 +1,466 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,bm,mathtools,booktabs,graphicx}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\Tr}{\operatorname{Tr}}
+\title{bilocal probe の微分から chord 基底の\\隣接コヒーレンスを復元する}
+\author{研究ノート}
+\date{2026年9月16日}
+\begin{document}
+\maketitle
+\begin{abstract}
+二重スケーリングしたSachdev--Ye--Kitaev模型とsine-dilaton gravityの既知の対応では、
+長さ演算子$\hat\ell$に対するbilocal operator $e^{-\Delta\hat\ell}$の期待値が
+重力側のmassive probeの二点関数を与える。
+本ノートでは、この同じ一パラメータ族の期待値をLorentzian時間$t$と逆温度$\beta$で微分すると、
+chord基底における隣接振幅積$c_n=\psi_n^*\psi_{n+1}$の虚部と実部が、それぞれ生成関数として得られることを示す。
+時間微分は確率流を、逆温度微分は隣接hopping energyを与える。
+従って、$\Delta$依存性を理想的に完全に知れば、長さの確率分布だけでなく、一定の条件下で純粋状態の復元に必要な隣接コヒーレンスも原理上決まる。
+一方、有限個の$\Delta$と有限精度のデータから係数を逆算する問題は数値的に不安定である。
+また、このbilocal operatorの重力的解釈が確立しているのは通常のdouble-scaled SYKとsine-dilaton gravityの対応であり、
+固定電荷complex SYKの各sectorへ同じ辞書を適用することは未証明である。
+ここで導くのはchord Hilbert空間上の厳密な代数関係と、その既知のbilocal辞書との組合せであり、新しいbulk gauge fieldの導出ではない。
+\end{abstract}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
+
+\section{問題設定}
+Sachdev--Ye--Kitaev模型、以下SYK模型は、多数のフェルミオンをランダムな多体相互作用で結合した量子力学模型である。
+相互作用次数とフェルミオン数を同時に大きくして一定の組合せを固定するdouble-scaling limitでは、
+乱数平均後の計算をchord diagramで表すことができる。
+chordとは、乱数平均で対になった相互作用の挿入を結ぶ補助的な線であり、物理空間中の線分ではない。
+開いたchordの本数を$n=0,1,\ldots$とし、その正規直交基底を$\ket n$とする。
+
+Heller--Papalini--Schuhmannは、double-scaled SYKとsine-dilaton gravityの既知の対応を用い、
+このchord番号が重力側の長さ演算子に対応することを有限温度でも示した\cite{Heller}。
+同じ構成では、正のパラメータ$\Delta$を持つbilocal operator
+\begin{equation}
+ Q_\Delta=e^{-\Delta\hat\ell}
+ \label{eq:Qdef}
+\end{equation}
+の期待値が、bulkのmassive probeのboundary-to-boundary propagator、すなわち境界二点関数に対応する\cite{Heller}。
+ここでbilocal operatorとは、境界上の二つの挿入点に依存する演算子である。
+$\Delta$はprobeを特徴づけるconformal weightであり、本ノートでは単に正の連続パラメータとして扱う。
+
+これまでの計算では、長さの測定確率
+\begin{equation}
+ P_n=|\psi_n|^2
+ \label{eq:Pdef}
+\end{equation}
+だけを使うと、相対位相が失われることを確認した。
+隣接する振幅の複素積
+\begin{equation}
+ c_n=\psi_n^*\psi_{n+1}
+ \label{eq:cdef}
+\end{equation}
+を知れば、純粋状態で非零確率の領域が連結な場合には、全体位相を除いて状態を復元できる。
+本ノートの目的は、$c_n$に含まれる情報を、重力側ですでに使われている$Q_\Delta$の期待値から取り出せるかを調べることである。
+
+以下で重要なのは、三つの異なる空間を区別することである。
+$n$はchord Hilbert空間の基底ラベル、$t$と$\beta$は状態を指定するパラメータ、bulk座標は重力側の時空座標である。
+これらを同一視しない。
+
+\section{chord Hamiltonianと熱的状態}
+\subsection{規約}
+無次元量$\epsilon>0$とエネルギー尺度$B>0$を導入し、
+\begin{equation}
+ q=e^{-\epsilon},\qquad \Omega=\epsilon B
+ \label{eq:scales}
+\end{equation}
+とする。
+長さ演算子を
+\begin{equation}
+ \hat\ell=\epsilon\hat N,\qquad \hat N\ket n=n\ket n
+ \label{eq:length}
+\end{equation}
+と定義する。
+Heller--Papalini--Schuhmannの記法の変形パラメータを$q_{\rm H}$とすれば、
+本ノートでは$\epsilon=2|\log q_{\rm H}|$に対応する\cite{Heller}。
+
+番号を一つ下げる演算子$A$を
+\begin{equation}
+ A\ket n=\sqrt{1-q^n}\ket{n-1},\qquad A\ket0=0
+ \label{eq:A}
+\end{equation}
+と定義する。
+数値計算で用いる実対称Hamiltonianは
+\begin{equation}
+ K=2B I-B(A+A^\dagger)
+ \label{eq:K}
+\end{equation}
+である。
+これは前ノートまでに用いた、エネルギー原点を移し基底の符号を交互に変えた規約であり、chord基底での測定確率を変えない。
+
+逆温度$\beta=1/T$とLorentzian時間$t$で指定される規格化状態を
+\begin{equation}
+ \ket{\psi_\beta(t)}
+ =Z_\beta^{-1/2}e^{-\ii Kt}e^{-\beta K/2}\ket0,
+ \qquad
+ Z_\beta=\bra0e^{-\beta K}\ket0
+ \label{eq:state}
+\end{equation}
+とする。
+この状態は熱的準備を受けたchord Hilbert空間の純粋状態であり、Gibbs密度演算子そのものではない。
+
+\subsection{bilocal probeの期待値}
+式\eqref{eq:length}から
+\begin{equation}
+ Q_\Delta=e^{-\Delta\hat\ell}=z^{\hat N},
+ \qquad
+ z=e^{-\epsilon\Delta}=q^\Delta
+ \label{eq:z}
+\end{equation}
+である。
+その期待値を
+\begin{equation}
+ \mathcal B_\Delta(t,\beta)
+ =\bra{\psi_\beta(t)}Q_\Delta\ket{\psi_\beta(t)}
+ =\sum_{n\geq0}P_n(t,\beta)z^n
+ \label{eq:B}
+\end{equation}
+と書く。
+$\mathcal B_\Delta$は長さ測定分布の確率生成関数であり、重力側では式\eqref{eq:Qdef}のbilocal probe期待値である\cite{Heller}。
+$\Delta=0$では$\mathcal B_0=1$である。
+
+本稿では、complex SYKの基本フェルミオン二点関数と混同しないため、$G$ではなく$\mathcal B$と書く。
+Gubankova--Sachdev--Tarnopolskyがcomplex SYKで用いるfermion Green functionは別の観測量である\cite{GST}。
+
+\section{時間微分は確率流の生成関数を与える}
+\subsection{隣接確率流}
+状態の成分を$\psi_n=\langle n|\psi\rangle$とし、隣接コヒーレンス$c_n$を式\eqref{eq:cdef}で定義する。
+式\eqref{eq:K}のSchr\"odinger方程式から、$n$から$n+1$へ流れる確率流は
+\begin{equation}
+ J_n=2B\sqrt{1-q^{n+1}}\,\operatorname{Im}c_n
+ \label{eq:J}
+\end{equation}
+となり、
+\begin{equation}
+ \dot P_n=J_{n-1}-J_n
+ \label{eq:continuity}
+\end{equation}
+を満たす。$J_{-1}=0$とする。
+
+$J_n$を$z^n$で重みづけした生成関数を
+\begin{equation}
+ \mathcal J_\Delta
+ =\sum_{n\geq0}J_n z^n
+ \label{eq:Jgen}
+\end{equation}
+と定義する。
+式\eqref{eq:B}を時間微分し、式\eqref{eq:continuity}を代入すると
+\begin{align}
+ \partial_t\mathcal B_\Delta
+ &=\sum_{n\geq0}z^n(J_{n-1}-J_n)\notag\\
+ &=(z-1)\sum_{n\geq0}J_nz^n
+ =(z-1)\mathcal J_\Delta.
+ \label{eq:timeidentity}
+\end{align}
+従って
+\begin{equation}
+ \boxed{\displaystyle
+ \mathcal J_\Delta
+ =\frac{\partial_t\mathcal B_\Delta}{z-1}}
+ \label{eq:JfromB}
+\end{equation}
+である。
+
+同じ式はHeisenberg方程式
+\begin{equation}
+ \partial_t\mathcal B_\Delta
+ =\ii\langle[K,Q_\Delta]\rangle
+ \label{eq:commutator}
+\end{equation}
+からも得られる。
+Lorentzian時間微分がcommutatorを測り、その値が隣接コヒーレンスの虚部を集めた確率流に一致する。
+
+\subsection{$\Delta\to0$極限}
+平均長を$m=\langle\hat\ell\rangle$とすると、
+\begin{equation}
+ \mathcal B_\Delta=1-\Delta m+O(\Delta^2),\qquad
+ z-1=-\epsilon\Delta+O(\Delta^2)
+\end{equation}
+なので
+\begin{equation}
+ \lim_{\Delta\to0}\mathcal J_\Delta
+ =\frac{\dot m}{\epsilon}
+ =\sum_nJ_n.
+ \label{eq:limitJ}
+\end{equation}
+従って、通常のKrylov complexity rateまたは長さの増加率は、$\Delta$依存の流れ生成関数の零probe-weight極限である。
+有限の$\Delta$は短い長さ側に重みを置くため、$\mathcal J_\Delta$は長さ方向にfilteredされた確率流とみなせる。
+
+最近Alfinito--Beccariaは、Krylov番号演算子の時間微分をKrylov speed operatorと呼び、
+その二時刻commutatorが特定の$\mathfrak{sl}(2,\mathbb R)$模型の半古典極限でbulk proper momentumの差に対応することを示した\cite{AlfinitoBeccaria}。
+式\eqref{eq:JfromB}はそれとは異なり、一時刻のbilocal probeを$\Delta$で分解してchord link currentを生成する恒等式である。
+$\Delta\to0$で既知のcomplexity-rate情報に戻る点では整合しているが、Krylov speed operatorそのものとbulk momentumを演算子として同一視するものではない。
+
+\section{逆温度微分は隣接hopping energyの生成関数を与える}
+\subsection{規格化状態の$\beta$微分}
+$E_\beta=\langle K\rangle$とする。$K$は時間発展Hamiltonianなので、$E_\beta$は$t$に依存しない。
+式\eqref{eq:state}を$\beta$で微分すると
+\begin{equation}
+ \partial_\beta\mathcal B_\Delta
+ =-\frac12\langle\{K,Q_\Delta\}\rangle
+ +E_\beta\mathcal B_\Delta.
+ \label{eq:betaderivative}
+\end{equation}
+ここで$\{X,Y\}=XY+YX$は反交換子である。
+同値な形は
+\begin{equation}
+ -2\partial_\beta\mathcal B_\Delta
+ =\langle\{K-E_\beta,Q_\Delta\}\rangle.
+ \label{eq:connected}
+\end{equation}
+従って逆温度微分は、エネルギーとbilocal probeのsymmetrized connected correlatorを測る。
+
+隣接リンクのhopping energyを
+\begin{equation}
+ h_n=-2B\sqrt{1-q^{n+1}}\,\operatorname{Re}c_n
+ \label{eq:h}
+\end{equation}
+と定義し、その生成関数を
+\begin{equation}
+ \mathcal H_\Delta=\sum_{n\geq0}h_nz^n
+ \label{eq:Hgen}
+\end{equation}
+とする。
+$K=2BI-B(A+A^\dagger)$と$Q_\Delta=z^{\hat N}$を用いると、
+\begin{equation}
+ \langle\{K,Q_\Delta\}\rangle
+ =4B\mathcal B_\Delta+(1+z)\mathcal H_\Delta
+ \label{eq:antiKH}
+\end{equation}
+を得る。従って
+\begin{equation}
+ \boxed{\displaystyle
+ \mathcal H_\Delta
+ =\frac{2\{(E_\beta-2B)\mathcal B_\Delta-
+ \partial_\beta\mathcal B_\Delta\}}{1+z}}
+ \label{eq:HfromB}
+\end{equation}
+である。
+
+$\Delta=0$では$\mathcal B_0=1$かつ$\partial_\beta\mathcal B_0=0$なので
+\begin{equation}
+ \mathcal H_0=E_\beta-2B=\sum_nh_n.
+ \label{eq:limitH}
+\end{equation}
+すなわち、総エネルギーから対角定数$2B$を引いた部分が、隣接hopping energyの総和である。
+
+\section{同じbilocal族から隣接コヒーレンスをまとめて復元する}
+\subsection{複素生成関数}
+隣接コヒーレンスを係数付きで集めた複素生成関数を
+\begin{equation}
+ \mathcal C_\Delta
+ =\sum_{n\geq0}\sqrt{1-q^{n+1}}\,c_nz^n
+ \label{eq:Cgen}
+\end{equation}
+と定義する。
+式\eqref{eq:J}と式\eqref{eq:h}から
+\begin{equation}
+ \mathcal C_\Delta
+ =\frac{-\mathcal H_\Delta+\ii\mathcal J_\Delta}{2B}
+ \label{eq:CfromJH}
+\end{equation}
+なので、式\eqref{eq:JfromB}と式\eqref{eq:HfromB}を代入して
+\begin{equation}
+ \boxed{\displaystyle
+ \mathcal C_\Delta
+ =\frac{\partial_\beta\mathcal B_\Delta+(2B-E_\beta)\mathcal B_\Delta}
+ {B(1+z)}
+ +\frac{\ii\,\partial_t\mathcal B_\Delta}{2B(z-1)}}
+ \label{eq:master}
+\end{equation}
+を得る。
+
+この式が本ノートの中心結果である。
+右辺に現れるのは、同じbilocal probeの期待値、Lorentzian時間微分、逆温度微分、状態の平均エネルギーだけである。
+$E_\beta=-\partial_\beta\log Z_\beta$なので、平均エネルギーも熱的partition functionから得られる。
+
+構造的には、
+\begin{equation}
+ \partial_t\mathcal B_\Delta=\ii\langle[K,Q_\Delta]\rangle,
+ \qquad
+ -2\partial_\beta\mathcal B_\Delta=\langle\{K-E_\beta,Q_\Delta\}\rangle
+ \label{eq:commanti}
+\end{equation}
+というcommutatorとconnected anticommutatorの対が、隣接コヒーレンスの虚部と実部を分離している。
+ここに情報幾何の$\alpha$-connectionを追加する必要はない。
+また、この二つをそれぞれbulk Maxwell fieldと同一視する根拠もない。
+
+\subsection{全$\Delta$依存性が分かる場合}
+$z=q^\Delta$と置けば、式\eqref{eq:Cgen}は
+\begin{equation}
+ \mathcal C(z)=\sum_{n\geq0}d_nz^n,
+ \qquad
+ d_n=\sqrt{1-q^{n+1}}\,c_n
+ \label{eq:power}
+\end{equation}
+という通常のべき級数である。
+収束半径内で$\mathcal C(z)$を正確に知れば、解析関数の一意性から係数$d_n$は原理上決まる。
+有限次数なら
+\begin{equation}
+ d_n=\frac{1}{n!}\left.\frac{\dd^n\mathcal C}{\dd z^n}\right|_{z=0}
+ \label{eq:coeff}
+\end{equation}
+である。
+従って、理想的に$\mathcal B_\Delta$を全$\Delta>0$について無限精度で知れば、
+隣接コヒーレンスの列を復元できる。
+前ノートの純粋状態復元条件を合わせれば、非零確率が連結な純粋状態は全体位相を除いて決定できる。
+
+ただし、これは実用的な数値復元が安定であるという意味ではない。
+$z\in(0,1)$上の有限個の値から多数の係数を求める問題はVandermonde行列または離散Laplace変換の逆問題になる。
+本実装の単純な有限多項式例では、等間隔の7点で条件数は約$2.9\times10^5$、10点で約$3.5\times10^8$、12点で約$4.2\times10^{10}$となった。
+条件数は、入力誤差が係数復元でどれだけ増幅され得るかを表す指標である。
+従って、\emph{原理上の一意性}と\emph{有限精度での安定なtomography}は区別する必要がある。
+
+\section{数値検証}
+\subsection{設定}
+$\Omega=1$、$\beta\Omega=10$、$t\Omega=1$とし、
+$\epsilon=0.05,0.02,0.01$を調べた。
+基底を$n=0,\ldots,M$で打ち切り、$M=\lceil18/\epsilon\rceil$とした。
+式\eqref{eq:master}の右辺は、第一にcommutator・anticommutatorから解析的に計算し、
+第二に$t$と$\beta$を実際に微小変化させた中心差分でも検査した。
+後者は式\eqref{eq:master}を直接使わない独立な数値微分である。
+
+\begin{table}[htbp]
+ \centering\small
+ \input{results/boundary_probe/table.tex}
+ \caption{生成関数の直接計算とbilocal微分からの復元の比較。
+ 「恒等式の最大誤差」は$0.1\leq\Delta\leq5$での直接計算とcommutator/anticommutator式の差、
+ 有限差分の二列は$\Delta=1$で$t,\beta$を実際にずらした中心差分との比較である。}
+ \label{tab:check}
+\end{table}
+
+commutator/anticommutatorで評価した恒等式は、打切り後の有限行列でも約$10^{-12}$以下で成立した。
+有限差分では$\beta$微分に差分誤差が増幅され、とくに小さい$\epsilon$でhopping energyの誤差が大きくなるが、
+直接値そのものと比べれば十分小さい。有限差分幅を変えた収束も別途確認した。
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.76\textwidth]{results/boundary_probe/current_generator.pdf}
+ \caption{$\epsilon=0.02$での確率流生成関数。丸印は隣接コヒーレンスから直接計算した値、
+ 破線の交差印は$\partial_t\mathcal B_\Delta$から式\eqref{eq:JfromB}で復元した値である。}
+ \label{fig:J}
+\end{figure}
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.76\textwidth]{results/boundary_probe/hopping_generator.pdf}
+ \caption{$\epsilon=0.02$でのhopping energy生成関数。
+ 丸印は直接計算、破線の交差印は$\partial_\beta\mathcal B_\Delta$から式\eqref{eq:HfromB}で復元した値である。}
+ \label{fig:H}
+\end{figure}
+
+\begin{figure}[htbp]
+ \centering\includegraphics[width=.68\textwidth]{results/boundary_probe/coherence_curve.pdf}
+ \caption{$\epsilon=0.02$で$\Delta$を変えたときの複素コヒーレンス生成関数$\mathcal C_\Delta$。
+ 図中の数字が$\Delta$である。$\Delta$を大きくすると、長いchord-number側の寄与が指数的に抑えられる。}
+ \label{fig:C}
+\end{figure}
+
+\section{boundary側で何を測っているか}
+Heller--Papalini--Schuhmannの構成では
+\begin{equation}
+ \mathcal B_\Delta(\tau,\beta)
+ =Z_\beta^{-1}\bra{0}e^{-\tau K}Q_\Delta e^{-(\beta-\tau)K}\ket0
+ \label{eq:euclideanbilocal}
+\end{equation}
+というEuclidean diskの二点関数を考え、$\tau=\beta/2+\ii t$と解析接続する\cite{Heller}。
+従って$t$微分は二つの挿入点のLorentzian separationを変化させる操作、$\beta$微分は熱円の周長を変化させる操作である。
+式\eqref{eq:JfromB}と式\eqref{eq:HfromB}は、chord Hilbert空間上ではこの既存のbilocal familyだけで隣接コヒーレンスの生成関数を決められることを意味する。
+
+これは「wavefunctionの位相を直接boundaryで測る」と仮定したものではない。
+測る対象はあくまでbilocal probeの期待値と、その外部パラメータに対する応答である。
+特に、$\beta$微分は式\eqref{eq:connected}のconnected anticommutatorとして、$t$微分は式\eqref{eq:commutator}のcommutatorとして表される。
+
+一方、この結果から直ちに「complex SYKの基本フェルミオン相関関数だけで$c_n$が測れる」とは言えない。
+Heller--Papalini--Schuhmannの$\mathcal B_\Delta$はsine-dilaton gravityのmassive matter probeに対応するbilocalである\cite{Heller}。
+F\"orste--Kruse--Natuはdouble-scaled complex SYKの固定電荷transfer matrixを構成したが、matter operatorのKrylov complexityとbulk interpretationは今後の課題として明記している\cite{Forste}。
+従って、本ノートの代数恒等式は固定電荷chainにも適用できるが、同じ$Q_\Delta$がcomplex SYKのどのcharged boundary operatorに対応するかは未確定である。
+
+\section{既存研究との関係と新規性の扱い}
+Heller--Papalini--Schuhmannは$\mathcal B_\Delta$から$-\partial_\Delta\mathcal B_\Delta|_{\Delta=0}$を取ることで平均長、従ってKrylov spread complexityを得た\cite{Heller}。
+本ノートでは$\Delta$微分ではなく、同じ$\Delta$依存を保持したまま$t$と$\beta$で微分し、chord linkの確率流とhopping energyの生成関数を取り出した。
+
+Alfinito--Beccariaは、Krylov number operatorの多時刻correlatorを研究し、特定のantisymmetricなKrylov speed correlatorが半古典bulk proper momentumの差に対応することを示した\cite{AlfinitoBeccaria}。
+彼ら自身も、Krylov speed operatorとmomentumを一般に直接同一視できるわけではないと述べている。
+本ノートの式\eqref{eq:master}は一時刻のbilocal probeのprobe-weight依存を用いるため、扱っているobservableは異なる。
+
+確認した範囲の文献では、式\eqref{eq:JfromB}--\eqref{eq:master}を隣接コヒーレンスのtomographyとして明示した記述は見つけていない。
+しかし、これらは三重対角Hamiltonianと$Q_\Delta=z^{\hat N}$から数行で導ける代数恒等式であり、式そのものを強い新規性として扱うべきではない。
+研究上の非自明な課題は、complex SYKのcharged matter operatorに対応するbilocalを構成し、
+その微分から得るコヒーレンス生成関数がbulkのmetric・momentum・gauge sectorのどの量に対応するかを示すことである。
+
+2026年の固定電荷holographic spread complexityの研究では、保存電荷を持つbulk probeでは固定電荷sectorへRouthian reductionすることが重要であることも指摘されている\cite{FixedCharge}。
+Routhianは、保存電荷を固定した後に、その電荷に共役な速度をLegendre変換して除いた有効Lagrangianである。
+本ノートのfixed-charge chainはすでにsectorを固定した補助量子系だが、将来bulk probeと照合するときにはこの点を無視できない。
+
+\section{元のWasserstein・Fisher・Berryの問いへの含意}
+これまでの計算では、長さ分布だけを使うWasserstein距離とFisher--Rao距離は相対位相を失っていた。
+式\eqref{eq:master}は、位相情報を戻すために任意の情報幾何接続を追加する必要はなく、
+もともとの量子力学的な時間発展と熱的準備に対するbilocal responseを使えばよいことを示す。
+
+この構造は
+\begin{equation}
+ \text{確率分布 }\mathcal B_\Delta,
+ \qquad
+ \text{unitary response }\partial_t\mathcal B_\Delta,
+ \qquad
+ \text{thermal response }\partial_\beta\mathcal B_\Delta
+ \label{eq:threepieces}
+\end{equation}
+という三つのデータから成る。
+unitary responseはcommutator、thermal responseはconnected anticommutatorであり、
+隣接コヒーレンスの虚部・実部をそれぞれ拾う。
+これは量子幾何でsymplecticな情報とmetricな情報が対になる構造を連想させるが、
+本ノートではFisher計量やBerry曲率との等式を主張しない。
+
+また、式\eqref{eq:master}で復元した位相をbulk electromagnetic fieldと呼ぶこともできない。
+neutral DSSYK/sine-dilaton対応では、この位相は前ノートで確認したように長さの共役運動量へつながる。
+charged complex SYKでMaxwell fieldを得るには、$U(1)$ charge、charged matter insertion、bulk gauge constraintを含む追加の辞書が必要である。
+
+\section{次に行う計算}
+次に判定すべき問題は明確になった。
+F\"orste--Kruse--Natuのoriented chord formalismは、double-scaled complex SYKでcharged operator insertionを扱うための準備として構成されている\cite{Forste}。
+従って、次の段階では
+\begin{enumerate}
+ \item fixed-charge complex SYKで、neutral DSSYKの$Q_\Delta=e^{-\Delta\hat\ell}$に対応するmatter insertionをoriented chordで定義できるか、
+ \item そのboundary correlatorが、本ノートの$\mathcal B_\Delta$と同じ生成関数になるか、
+ \item charge-evenな部分とcharge-oddな部分を分離したとき、後者がGubankova--Sachdev--\allowbreak Tarnopolskyのelectric sectorと接続するか
+\end{enumerate}
+を調べる。
+三番目では、complex SYKのfermion Green functionのsymmetric/antisymmetric decompositionと、ここで扱うmatter bilocalを混同しないことが必要である\cite{GST}。
+
+\begin{thebibliography}{9}
+\bibitem{Heller}
+M.~P.~Heller, J.~Papalini and T.~Schuhmann,
+\emph{Krylov spread complexity as holographic complexity beyond JT gravity},
+\href{https://arxiv.org/abs/2412.17785v2}{arXiv:2412.17785v2 [hep-th]}.
+
+\bibitem{AlfinitoBeccaria}
+E.~Alfinito and M.~Beccaria,
+\emph{Krylov Correlators in $\mathfrak{sl}(2,\mathbb R)$ Models: Exact Results and Holographic Complexity},
+\href{https://arxiv.org/abs/2605.17550v4}{arXiv:2605.17550v4 [hep-th]}.
+
+\bibitem{Forste}
+S.~F\"orste, Y.~Kruse and S.~Natu,
+\emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model},
+\href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2 [hep-th]}.
+
+\bibitem{GST}
+E.~Gubankova, S.~Sachdev and G.~Tarnopolsky,
+\emph{Scaling limits of complex Sachdev--Ye--Kitaev models and holographic geometry},
+\href{https://arxiv.org/abs/2512.05294}{arXiv:2512.05294 [hep-th]}.
+
+\bibitem{FixedCharge}
+D.~Chatzis, M.~Hammond, C.~Nunez, A.~V.~Ramallo and R.~T.~Santamaria,
+\emph{Holographic Spread Complexity at Fixed Charge: Routhians, Branes and Strings},
+\href{https://arxiv.org/abs/2608.23709}{arXiv:2608.23709 [hep-th]}.
+\end{thebibliography}
+\end{document}
