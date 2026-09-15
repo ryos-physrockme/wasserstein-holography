@@ -1,0 +1,32 @@
+{
+  "conventions": {
+    "N": 10000.0,
+    "p_B": 100.0,
+    "p_GST": 200.0,
+    "probe_size": 80.0,
+    "probe_charge": 20.0
+  },
+  "max_even_match_error": 8.881784197001252e-16,
+  "max_odd_match_error": 2.220446049250313e-16,
+  "max_decomposition_error": 1.887379141862766e-15,
+  "parity": {
+    "even_Q_flip_error": 0.0,
+    "odd_Q_flip_error": 0.0
+  },
+  "neutral_probe": {
+    "B_even": 0.21471334348046678,
+    "B_odd": -0.0,
+    "log_asymmetry": -0.0
+  },
+  "light_unit_probe": {
+    "Q": 0.23,
+    "ratio_from_BNR": 0.36986301369863017,
+    "GST_boundary_ratio": 0.36986301369863017,
+    "difference": 0.0
+  },
+  "finite_size_correction": {
+    "Q": 0.23,
+    "full_log_ratio": -0.9852872123840416,
+    "light_log_ratio": -0.9946225751440619
+  }
+}
