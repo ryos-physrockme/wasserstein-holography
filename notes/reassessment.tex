@@ -1,0 +1,595 @@
+\documentclass[a4paper,11pt]{ltjsarticle}
+\usepackage[haranoaji]{luatexja-preset}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,booktabs,longtable,array}
+\usepackage{xurl}
+\usepackage[unicode,hidelinks]{hyperref}
+\numberwithin{equation}{section}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newcommand{\FR}{\mathrm{FR}}
+\newcommand{\LC}{\mathrm{LC}}
+\title{情報幾何とホログラフィー\\既存の対応と研究方針の再評価}
+\author{研究ノート}
+\date{2026年9月16日}
+\begin{document}
+\maketitle
+\begin{abstract}
+確率分布の輸送距離から時空を構成する試みを、Fisher計量、双対接続、量子状態のBerry曲率に基づく既存の研究と比較する。
+目的は、距離の選択が何を仮定しているか、接続がどの空間のどの物理量に対応するか、今後どの計算に研究上の価値があるかを判定することである。
+Fisher計量がEuclidean AdS幾何を与える構成も、量子情報幾何がバルクの正準エネルギー・シンプレクティック形式を与える対応も既に存在する。
+従って、Wassersteinを唯一の幾何とする必要はなく、Fisherを熱力学応答だけに限定するのも適切でない。
+一方、状態空間の接続と時空上の電磁ポテンシャルは同じ対象ではない。
+荷電プローブの平行移動からゲージholonomyを検証する方向と、双対接続を非線形応答として調べる方向を、成立条件・既知の内容・新規性の判定条件を分けて提案する。
+既存のchord計算は再現と診断の基盤として保存し、その拡張を自動的な最優先課題とはしない。
+\end{abstract}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\clearpage
+
+\section{問いを分ける}
+ホログラフィーとは、重力を含む理論と、それより低い次元の量子理論の対応である。
+前者の時空をbulk、後者をboundaryと呼ぶ。
+本稿の出発点は、(i) Wasserstein幾何である必要があるのか、(ii) バルク電磁場はその幾何の何か、
+(iii) Fisher計量以外の情報幾何の量に物理的な対応があるか、という三つの問いである。
+
+まず、確率分布の空間、量子状態の空間、重力の解の空間、バルク時空を区別する。
+\begin{center}\small
+\begin{tabular}{p{.19\textwidth}p{.33\textwidth}p{.36\textwidth}}\toprule
+空間 & その一点の意味 & 代表的な幾何的量\\\midrule
+測定結果の空間 & 位置、エネルギー、基底番号などの一つの結果 & 輸送のコストを定める距離\\
+統計モデル・状態の空間 & 一つの確率分布または密度演算子 & Fisher計量、双対接続、Berry曲率\\
+バルク解の空間 & 時空全体の場の配位または初期値 & 正準エネルギー、シンプレクティック形式\\
+バルク時空 & 一つの時空の一つの出来事 & 計量$g_{\mu\nu}(X)$、電磁場$F_{\mu\nu}(X)$\\\bottomrule
+\end{tabular}\end{center}
+統計モデル上の添字を$i,j$、バルク時空の添字を$\mu,\nu$とする。
+例えばBerry曲率$\mathcal F_{ij}$を計算しても、$i$を$\mu$と同一視できる状態族と写像がなければ、電磁場$F_{\mu\nu}$は得られない。
+従来のAdS/CFTでも、無限次元のHilbert空間そのものを有限次元の時空と等長に対応させるのではない。
+バルクの場の配位の空間も無限次元であり、局在したプローブの族などを通して時空の位置を読む。
+
+以後、計量がAdS型になること、既知の観測量が再現されること、運動方程式が導出されること、理論全体の双対性が成立することを分ける。
+Erdmenger--Grosvenor--Jeffersonは、対称性だけでもAdS型の情報計量が現れること、およびそこからの過剰な物理解釈を詳しく検討している\cite{EGJ}。
+この論点はWassersteinにもFisherにも同じ基準で適用すべきである。
+
+\section{これまでの計算の位置づけ}
+\subsection{定義と一般的な量子力学から従う部分}
+番号$n=0,1,\ldots$上の確率分布を$P_n$とし、番号間の輸送コストを$|n-m|$とする。
+全確率が原点にある分布$\delta_0$までの1-Wasserstein距離は
+\begin{equation}
+ W_1(P,\delta_0)=\sum_n nP_n
+ \label{eq:delta}
+\end{equation}
+である。右辺をKrylov complexityと呼べる基底を選んだとしても、この等式自体は輸送の定義である。
+ここでKrylov基底とは、初期状態にHamiltonianを繰り返し作用させ、そのベクトル列を直交化した基底である。
+
+異なる分布の累積確率が全ての番号で同じ順序に並ぶ場合、$W_1$は平均番号の差に等しい。
+この順序は一次確率優越と呼ばれ、大きい番号側に分布が移ることを累積確率で定義したものである。
+反対に、平均の差だけで全ての対の距離を表せるわけではない。
+我々の有限変形のchord時間発展では、その差と内向きの確率流を数値検証した。
+ただし、これはHusimi分布を使う元の論文そのものの反例ではない。
+
+量子状態を$\psi_n=\sqrt{P_n}e^{iS_n}$と書けば、$P_n$だけでは相対位相$S_{n+1}-S_n$が分からない。
+隣接する複素積$\psi_n^*\psi_{n+1}$を保持すれば、非零確率の支持が連結な純粋状態は全体位相を除いて復元できる。
+混合状態や、支持が零点で分断される場合には追加情報が必要である。
+これらは重要な診断だが、量子状態の情報の不完全性・復元に関する一般的な内容であり、バルク電磁場の導出ではない。
+
+\subsection{既存のホログラフィック対応を再現した部分}
+固定電荷complex Sachdev--Ye--Kitaev模型（以下complex SYK模型）の有効三重対角Hamiltonianを使い、
+熱的準備後の平均chord数を計算した\cite{FKN}。
+chordとは乱数平均で対になった相互作用の挿入を結ぶ補助的な線であり、その本数を数える。
+長さ演算子との対応、基準状態の選択、有限温度の$\log\cosh$型成長は、Heller--Papalini--Schuhmannなどの既存の対応を入力とする\cite{HPS}。
+長さの共役運動量との半古典比較も、同じ既存のHamiltonianを別の変数で検査したものに位置づく。
+
+中性の二点プローブ$\langle e^{-\Delta\hat\ell}\rangle$の時間・逆温度微分から、隣接コヒーレンスの生成関数を得た。
+$\hat\ell$は既に同定した長さ演算子、$\Delta$はプローブを指定する正のパラメータである。
+この恒等式は、熱的準備を変化させるという仮定のもとで、交換子と反交換子の応答に分解できる。
+無限精度の関数から係数が一意に決まることと、有限精度・有限個の観測から安定に復元できることは異なり、後者には悪条件の逆問題が残る。
+
+荷電二点関数の電荷に対して偶・奇の成分を分け、固定電荷表示とgrand-canonical表示の係数を照合した\cite{BNR,GST}。
+grand-canonical表示とは、化学ポテンシャルで異なる電荷sectorに重みを付ける表示である。
+この照合は既知の相関関数の規約を整合させる検証であり、Maxwell作用や局所的な$A_\mu(X)$を新しく得たわけではない。
+
+\subsection{今後の判断で維持する制限}
+現時点で、論文化の中心となる新しいホログラフィック辞書は確定していない。
+一方、状態族・測定・距離・基準状態を変更したとき、何が保たれて何が失われるかを検査する基盤はできている。
+この基盤は捨てず、元の三つの問いに答えるための比較と反例に用途を絞る。
+
+特に次の言い換えは避ける。
+$W_1$による順序の直線化を、Hilbert空間全体からの時空次元の導出とは呼ばない。
+既知の長さ対応の再現を、Wassersteinの一意性の証明とは呼ばない。
+中性プローブが特定の電荷反転対称な設定で電荷の符号を識別しないことを、全ての正の確率表現の不可能性とは呼ばない。
+一般のHusimi $Q$分布は密度演算子の情報を保持でき、固定基底で絶対値の二乗だけを取る操作とは異なる。
+
+\section{Fisher計量による時空の構成は既に存在する}
+\subsection{instantonの位置と大きさがAdSの座標になる例}
+Blau--Narain--Thompsonの構成では、四次元Euclidean Yang--Mills理論の一つのinstantonの作用密度を規格化し、
+\begin{equation}
+ p(x;a,\rho)=\frac6{\pi^2}\frac{\rho^4}{(|x-a|^2+\rho^2)^4},
+ \qquad x,a\in\mathbb R^4,\quad \rho>0
+ \label{eq:instanton}
+\end{equation}
+とする\cite{BNT}。instantonは有限作用を持つEuclidean場の解であり、$a$は中心位置、$\rho$は大きさである。
+確率変数は$x$、分布を指定する五つのパラメータは$(a^1,\ldots,a^4,\rho)$である。
+規格化$\int\dd^4x\,p=1$を使い、Fisher計量を
+\begin{equation}
+ g^{\FR}_{ij}=\int\dd^4x\,p\,\partial_i\log p\,\partial_j\log p
+ \label{eq:fisher}
+\end{equation}
+と定義すると、
+\begin{equation}
+ \dd s_{\FR}^2=\frac{16}{5}\frac{|\dd a|^2+\dd\rho^2}{\rho^2}
+ \label{eq:ads5}
+\end{equation}
+を得る。これは五次元の双曲空間、すなわちEuclidean AdS$_5$の計量である。
+$\rho$が動径方向を担う。
+これはFisherを単に熱力学の応答に使う例ではなく、パラメータ空間をバルク時空として読む構成である。
+
+同論文は対称な背景の計量を計算するだけでなく、境界計量を一次で変形したときのEinstein方程式との整合も調べている。
+ただし、Einstein条件、密度の伝播関数としての条件、測地線に関する条件を全てそのまま二次まで維持できるわけではないことも示す\cite{BNT}。
+従って、完全な非線形双対性が確立したと解釈してはいけない。
+物理的に重要なのは、背景の形だけでなく、摂動に対する応答をテストしている点である。
+
+\subsection{同じ確率分布にWasserstein計量を入れるとどうなるか}
+式\eqref{eq:instanton}の$x$空間に通常のEuclidean距離を固定し、二乗距離を輸送コストとする$W_2$を入れる。
+ここで$W_2$を使うのは、一般に局所Riemann計量として比較できるためであり、元の構成の$W_1$と同じだと仮定したためではない。
+
+中心0、大きさ1の分布に従う変数$Y$について、$\E Y=0$、$\E|Y|^2=2$である。
+$a+\rho Y$を$b+\sigma Y$へ同じ$Y$で対応させる輸送のコストは
+\begin{equation}
+ |a-b|^2+2(\rho-\sigma)^2
+ \label{eq:w2cost}
+\end{equation}
+となる。任意の輸送について、中心化した変数間の相関にCauchy--Schwarzの不等式を使えば、この値が下界でもあると分かる。
+よってこの対応は最適で、
+\begin{equation}
+ W_2^2(p_{a,\rho},p_{b,\sigma})=|a-b|^2+2(\rho-\sigma)^2,
+ \qquad \dd s_{W_2}^2=|\dd a|^2+2\dd\rho^2.
+ \label{eq:w2flat}
+\end{equation}
+同じ五次元の分布族で、Fisherは双曲幾何、通常の$W_2$は平坦幾何である。
+後者を手で$\rho^{-2}$倍すれば別の計量になるが、それは通常の$W_2$とは異なる追加の定義である。
+この計算はlocation--scale族の標準的な最適輸送の再計算であり、新規性を主張しない\cite{LiZhao}。
+
+より簡単な一次元正規分布、平均$m$、標準偏差$s>0$の族でも
+\begin{equation}
+ \dd s_{\FR}^2=\frac{\dd m^2+2\dd s^2}{s^2},\qquad
+ W_2^2= (m-m')^2+(s-s')^2
+ \label{eq:normal}
+\end{equation}
+となる。前者の双曲性だけから重力の運動方程式は出ない\cite{EGJ}。
+Fisherは可逆な測定結果の変数変換に不変で、輸送距離は$x$空間のコストに依存する。
+どちらがよいかは、何を測定し、どの物理量を再現したいかで判断すべきである。
+
+\subsection{$W_1$の役割と限界}
+$W_1$は順序づけられた分布で平均の差に帰着するため、Hashimoto--Tanahashiの選んだ状態族に対して特別な加法性を持つ\cite{HT}。
+しかし一般の多パラメータ族では、その微小距離の二乗が二次形式であるとは限らない。
+正規分布族の速度$(u,v)=(\dot m,\dot s)$でさえ、局所的な$W_1$ノルムは標準正規変数$Z$を使い
+\begin{equation}
+ F_1(u,v)=\E|u+vZ|
+ \label{eq:w1norm}
+\end{equation}
+となり、二次形式に由来するノルムの平行四辺形恒等式を満たさない。
+従って$W_1$の多次元構成にLevi--Civita接続を自動的に導入して、一般相対論と同じ議論を進めてはいけない。
+Riemann計量を持つ部分族、別の距離、あるいは別の接続の定義が必要である。
+
+\section{量子Fisher幾何のバルク側の意味}
+\subsection{一つの量子Fisher計量があるわけではない}
+古典的なFisher計量には、適切な単調性と統計モデルの族を仮定した一意性定理がある。
+しかし密度演算子の空間では、量子操作で距離が増えないという条件だけでも多数の単調計量が存在する\cite{Petz}。
+古典の定理をそのまま量子へ移すことはできない。
+
+特に、量子相対エントロピー
+\begin{equation}
+ D(\rho\Vert\sigma)=\Tr\rho(\log\rho-\log\sigma)
+ \label{eq:relativeentropy}
+\end{equation}
+の二次変分によるBogoliubov--Kubo--Mori計量、fidelityからのBures計量、純粋状態のFubini--Study計量を区別する。
+Bures計量に定数倍で対応するものがsymmetric logarithmic derivativeに基づく量子Fisher計量である。
+互いに可換な密度演算子の族では古典Fisherへ帰着するが、一般には同じものではない。
+
+\subsection{正準エネルギーへの対応}
+Lashkari--Van Raamsdonkは、境界真空を球領域に制限した密度演算子の摂動について、
+相対エントロピーの二次変分がバルクの正準エネルギーに対応することを示した\cite{LVR}。
+正準エネルギーとは、背景解のまわりの場の摂動に対して定義される二次のエネルギー形式であり、
+単に局所エネルギー密度の値ではない。
+規約を二次微分で統一すれば、概略
+\begin{equation}
+ \left.\frac{\dd^2}{\dd\lambda^2}
+ D(\rho_A(\lambda)\Vert\rho_A(0))\right|_{\lambda=0}
+ =\mathcal E_{{\rm can},A}(\delta\Phi,\delta\Phi)
+ \label{eq:canonical}
+\end{equation}
+と書く。$A$は境界の球領域、$\lambda$は状態の変化を指定するパラメータ、$\delta\Phi$は対応するバルク場の線形摂動である。
+これは\emph{状態・解の空間の計量}に関する対応であって、情報計量の添字をバルク時空の添字に置き換える等式ではない。
+
+Miyajiらのfidelity susceptibilityとバルク体積の提案も重要であるが\cite{Miyaji}、
+任意の量子情報計量が最大体積に等しいという一般公式ではない。
+Belin--Lewkowycz--S\'arosiは、周辺的なスカラー変形に対する正確な対象がsymplectic fluxであり、
+一般には最大体積そのものではないと論じている\cite{York}。
+量をどの状態族でどう定義したかを一致させる必要がある。
+
+\section{exponential接続、mixture接続、$\alpha$接続}
+\subsection{境界のsourceと期待値に直接の意味がある}
+古典的な正の確率測度を持つ例から始める。
+配位を$x$、観測量を$O_a(x)$、それに線形結合する外部sourceを$J^a$とし、
+\begin{equation}
+ p_J(x)=p_0(x)\exp[J^aO_a(x)-\psi(J)],\qquad
+ \psi(J)=\log\int\dd x\,p_0(x)e^{J^aO_a(x)}
+ \label{eq:expfamily}
+\end{equation}
+とする。sourceとは、HamiltonianやEuclidean作用を通して外から加えるパラメータである。
+指標$a$は観測量を区別し、必要なら時空位置や平滑化関数のラベルも含む。
+
+sourceに対する対数密度の微分をscoreと呼ぶ。
+この族ではscoreは$O_a-\langle O_a\rangle$である。
+期待値座標$\eta_a$、Fisher計量、Amari--Chentsovの三次テンソルは
+\begin{align}
+ \eta_a&=\partial_a\psi=\langle O_a\rangle,\qquad
+ g_{ab}=\partial_a\partial_b\psi=\langle\Delta O_a\Delta O_b\rangle,
+ \label{eq:response2}\\
+ C_{abc}&=\partial_a\partial_b\partial_c\psi
+ =\langle\Delta O_a\Delta O_b\Delta O_c\rangle,
+ \qquad \Delta O_a=O_a-\langle O_a\rangle.
+ \label{eq:response3}
+\end{align}
+最後の期待値は三次の連結相関であり、低次の積に分解できない部分を測る。
+Floerchingerはこのsourceと期待値の双対構造をEuclidean場の理論で定式化している\cite{Floerchinger}。
+
+exponential接続（$e$接続）は$J$をaffine座標とし、mixture接続（$m$接続）は$\eta$を双対affine座標とする。
+affineとは、その座標で接続係数が零となり、直線が平行移動の基準となることを意味する。
+全確率単体では$m$接続は確率の線形混合に対応する。
+部分的な指数型分布族では、その族内の$m$測地線が分布そのものの単純な線形混合と常に一致する、とまでは言わない。
+期待値とsourceを交換するLegendre変換は、有効作用へ移る操作に対応する。
+ホログラフィーではsourceはバルク場の境界値、応答は正規化可能な係数に対応するが、
+これを境界条件の変更と同一視するには、境界項を含む変分問題を別途指定する必要がある。
+
+\subsection{何が接続の独立な情報か}
+Levi--Civita接続を$\nabla^{(0)}$とし、標準規約を
+\begin{equation}
+ \Gamma^{(\alpha)i}{}_{jk}
+ =\Gamma^{(0)i}{}_{jk}-\frac\alpha2 g^{i\ell}C_{\ell jk}
+ \label{eq:alpha}
+\end{equation}
+とする。$\alpha=1$が$e$接続、$\alpha=-1$が$m$接続である。
+式\eqref{eq:expfamily}の自然座標では、下付きの係数が$(1-\alpha)C_{abc}/2$となる。
+従って、全ての$\alpha$が独立した新しい場を一つずつ追加するのではなく、
+固定した$g$と$C$から作る接続の族である\cite{EGJ,Floerchinger}。
+$e,m$接続の曲率が零でも、Levi--Civita曲率は一般に零ではない。
+正規分布族はその具体例である。
+
+三次テンソルは、通常の時空電磁場の反対称二階テンソルと同じ型ではない。
+さらに、指数型族で接続のtraceだけを取ると
+\begin{equation}
+ \Gamma^{(\alpha)k}{}_{ki}
+ =\frac{1-\alpha}{2}\partial_i\log\det g
+ \label{eq:trace}
+\end{equation}
+となり、その外微分は零である。
+これはtraceをAbelianポテンシャルと読む素朴な案を排除するが、接続全体の曲率が全ての$\alpha$で零だと言っているわけではない。
+また、このtraceはまず実接束の接続であり、物理的な$U(1)$束を自動的に与えない。
+
+\subsection{FisherでAdSが出ても、接続の族が縮退する例}
+式\eqref{eq:instanton}では、実は
+\begin{equation}
+ C_{ijk}=\int\dd^4x\,p\,\partial_i\log p\,\partial_j\log p\,\partial_k\log p=0.
+ \label{eq:instcubic}
+\end{equation}
+これはBlau--Narain--Thompsonの式(2.38)に既に含まれる\cite{BNT}。
+本稿でも付録の積分で検算する。
+従ってこの分布族では、全ての$\alpha$接続がLevi--Civita接続に一致する。
+しかし式\eqref{eq:ads5}の負曲率は非零である。
+この族は通常の自然座標による指数型族ではなく、$e,m$接続が平坦という前小節の仮定は当てはまらない。
+
+この例は、$\alpha$を変えれば必ず異なる物理を持つバルク場が出る、という考えへの直接的な注意である。
+同時に、非対称な摂動で$C$がどのように生じるかは、二次応答だけでは分からない情報を調べる明確な候補になる。
+
+\subsection{量子・連続場への拡張では再定義が必要}
+Grassmann変数を含むフェルミオン経路積分や、一般の複素Euclidean重みを、そのまま正の古典確率密度とはみなせない。
+非可換な密度演算子の指数型族では、二次微分は通常の共分散ではなく、虚時間に沿った相関を積分したBogoliubov--Kubo--Mori型の量になる。
+さらに場の局所相関には短距離特異点がある。
+従って、新しい課題では密度演算子の族、divergence、正則化、sourceの支持を先に固定し、
+そこから計量と双対接続を導出する。古典式\eqref{eq:response3}を無条件に持ち込まない。
+
+\section{Berry、Uhlmann、modular接続の既存の対応}
+\subsection{Berry曲率はバルクの解のシンプレクティック形式に対応する}
+規格化した純粋状態の族$\ket{\Psi(\lambda)}$に対し、Berry接続と曲率を
+\begin{equation}
+ \mathcal A_i=i\langle\Psi|\partial_i\Psi\rangle,
+ \qquad \mathcal F_{ij}=\partial_i\mathcal A_j-\partial_j\mathcal A_i
+ \label{eq:berry}
+\end{equation}
+とする。接続は状態の位相の選び方で変わるが、曲率と閉経路の位相は不変である。
+Euclidean経路積分のsourceを変えて状態を準備する場合、
+Belin--Lewkowycz--S\'arosiは、この状態族のK\"ahler形式、同値な規約でのBerry曲率が、
+対応するバルク解のシンプレクティック形式に等しいことを示している\cite{BLS}。
+K\"ahlerとは、計量と複素構造と閉じた二形式が整合する幾何である。
+
+シンプレクティック形式$\Omega_\Sigma$は、初期値を置く空間的断面$\Sigma$上で、
+二つの場の変化$\delta_1\Phi,\delta_2\Phi$を反対称に組み合わせる量である。
+対応の構造は
+\begin{equation}
+ \mathcal F^{\rm Berry}_{ij}
+ \longleftrightarrow \Omega_\Sigma(\delta_i\Phi,\delta_j\Phi)
+ \label{eq:symplecticdictionary}
+\end{equation}
+であり、規約に応じた全体符号・係数をそろえて比較する。
+$\Phi$はバルク場の集合である。
+電磁場に注目して、空間成分$A_a$に正準共役な電束密度を$\Pi^a$と書けば、その寄与は規約を固定して
+\begin{equation}
+ \Omega_{\Sigma}^{\rm EM}(\delta_1,\delta_2)
+ =\int_\Sigma\dd^dX\,
+ (\delta_1\Pi^a\,\delta_2A_a-\delta_2\Pi^a\,\delta_1A_a)
+ \label{eq:maxwellsymplectic}
+\end{equation}
+となる。これはMaxwell作用の変分から得られる正準形式である。
+ゲージ変換を同一視する条件、断面の境界での電束や境界自由度の扱いによって、境界項を含む処方が必要になる。
+\emph{局所場$F_{\mu\nu}(X)$と式\eqref{eq:maxwellsymplectic}は異なる対象}だが、後者には前者の力学が含まれる。
+
+従って、「Berry接続は電磁場そのものではない」という指摘は正しい一方、
+それだけでBerry幾何のホログラフィックな役割を否定してはいけない。
+既に存在する対応を出発点とし、そのgauge sectorで何が新しく求められるかを問うべきである。
+
+\subsection{混合状態と部分領域の接続}
+混合状態$\rho$は、補助系を追加した純粋状態の部分トレースとして表せる。この表現をpurificationと呼ぶ。
+その表し方は一意でない。
+Uhlmann平行移動は、隣り合うpurificationの重なりを最大にするという規則で、その自由度を扱う。
+Kirklinは、境界の部分領域に制限した密度演算子をこの規則で動かすと、
+対応するentanglement wedge内のバルク場のシンプレクティック形式が得られると示した\cite{Kirklin}。
+entanglement wedgeは、境界部分領域と対応する極値面で囲まれ、そこから再構成するバルク領域である。
+これは任意に選んだpurificationの位相を電磁ポテンシャルと呼ぶ操作ではない。
+
+別の構成では、部分領域の密度演算子からmodular Hamiltonian
+\begin{equation}
+ K_A=-\log\rho_A
+ \label{eq:modular}
+\end{equation}
+を作り、それと可換な変換が残す基底の自由度を平行移動する。
+これがmodular Berry接続である\cite{Modular}。
+Czechらは、領域の形を変えるときのこの接続が、適切な半古典領域でバルク極値面の近傍の基準枠を接続し、
+その曲率が時空のRiemann曲率と関係することを示した\cite{Sewing}。
+さらに状態のsource変化へ拡張して、entanglement wedgeのシンプレクティック形式と量子情報計量との関係が調べられている\cite{Changing}。
+これらのmodular接続は、Fisher計量から式\eqref{eq:alpha}で作る接続とは定義が異なる。
+
+\section{Wassersteinバルクの電磁場は何か}
+\subsection{計量だけから内部ゲージ接続は定まらない}
+$U(1)$ゲージポテンシャル$A_\mu(X)$は、荷電場の位相を時空の異なる点で比較する規則である。
+場の強さ$F=\dd A$と、閉経路$\gamma$に沿うWilson位相
+\begin{equation}
+ U_e(\gamma)=\exp\left(i e\oint_\gamma A_\mu\dd X^\mu\right)
+ \label{eq:wilson}
+\end{equation}
+がゲージ不変な情報を持つ。$e$は物理的なプローブ電荷である。
+同じ時空計量の上には一般に多数の異なる$U(1)$接続を置ける。
+従って、Wassersteinでバルク計量を得たとしても、計量だけで$A_\mu$が決まるとは言えない。
+正の確率表現が情報を失うという一般的な主張ではなく、指定された距離のデータからの非一意性の問題である。
+
+既存の荷電SYKの構成では、電荷に敏感な二点関数と、その虚時間間隔に関する非対称部分がゲージ場の情報を持つ\cite{BNR,GST}。
+しかし、それはWasserstein接続の曲率だと示されたものではない。
+Wassersteinの輸送の流れ、Krylov番号方向の確率流、物理的な保存電流、バルク電場は区別しなければならない。
+
+さらに、固定した時空上の自由Maxwell場では、式\eqref{eq:maxwellsymplectic}は背景の$A_\mu$自身には依存しない。
+異なる古典場の解を中心として同じ線形摂動を加えても、解の空間のシンプレクティック形式は共通である。
+従って、この二形式を再現しただけでは、どの背景電場を選んだかまでは決まらない。
+状態族の物理的なラベル、基準状態、電束の期待値、局在プローブなどを併用する必要がある。
+これはBerry曲率の有用性を否定するのでなく、力学の正準構造と一つの背景解の値を区別する注意である。
+
+二次元Maxwell理論では独立な局所的横波としての光子はなく、電束と境界の自由度が主要な役割を持つ。
+従って、AdS$_2$の電場パラメータの再構成と、高次元での伝播する電磁場の再構成も分ける。
+
+\subsection{接続以外の情報量からMaxwell方程式を得る既存の経路}
+Hasegawa--Taniiは、保存$U(1)$電流を持つ共形場理論について、charged entanglement entropyの第一法則から、
+AdS背景まわりの線形化Maxwell方程式と重力方程式を得ている\cite{HasegawaTanii}。
+具体的には、球領域$A$のmodular Hamiltonianを$K_A$、その領域の電荷を$Q_A$として、
+\begin{equation}
+ \rho_{A,\nu}=\frac{e^{-K_A+\nu Q_A}}{\Tr e^{-K_A+\nu Q_A}},
+ \qquad S_A(\nu)=-\Tr(\rho_{A,\nu}\log\rho_{A,\nu})
+ \label{eq:chargedentropy}
+\end{equation}
+を使う。$\nu$は領域の電荷へ重みを付ける無次元パラメータであり、温度の次元を持つ通常の化学ポテンシャルとは区別する。
+同論文の設定では$K_A$と$Q_A$の可換性を仮定し、第一法則に電荷の変化が入る。
+バルク側には、極値面の面積に加えて電束を含むエントロピー処方を置く。
+その処方と境界電流の対応を用い、全ての球領域で第一法則が成立することから局所的な線形方程式を得る。
+
+この結果は、ゲージ場を情報から検討する際に比較すべき、力学に踏み込んだ先行研究である。
+ただし、同論文は電束項を含む処方そのものの一般的なreplica導出を完成したとはしていない。
+replica法とは、密度演算子の整数べきのトレースを経由してエントロピーを求める方法である。
+従って、任意の情報計量だけからMaxwell作用を一意に選んだ、という結果とも区別する。
+
+\subsection{今後検証できる二つの意味}
+第一の意味は、式\eqref{eq:symplecticdictionary}におけるMaxwell sectorである。
+ここではBerry曲率が、電磁場の配位と電束の正準関係を測る。
+これは既存の対応を具体的なsource族で検査する問題として定義できる。
+
+第二の意味は、局在する荷電プローブの状態族の平行移動を、式\eqref{eq:wilson}と比較することである。
+この場合は、状態パラメータとバルクの位置の対応が必要であり、
+ゲージ不変な荷電状態を作るために、どこへ電束を伸ばすかなどのdressingも指定する必要がある。
+dressingとは、荷電場単体をゲージ不変な物理的観測量にするために付加するゲージ場の情報である。
+
+単に$A_\mu$を既知のWilson因子として状態の定義へ入れ、同じ位相が出たと確かめるだけなら循環的である。
+境界側で独立に定義した状態の重なりから、電荷反転で符号が変わる閉経路位相を取り出し、
+既知のバルク背景で計算した電束と比較する必要がある。
+古典的な荷電粒子の位相空間に電磁場を加えること自体は既知の最小結合であり、それだけを新規性としない。
+
+\section{周辺の文献をどの問題に使うか}
+\subsection{情報幾何による時空、解の空間、相関の別々の再構成}
+本節は今回の方針に直結する文献の役割を整理するものであり、全情報幾何・全ホログラフィー文献の網羅一覧ではない。
+2026年9月16日までに確認した公開文献を対象とする。
+
+\paragraph{Fisherでの時空構成と限界}
+Blau--Narain--Thompson\cite{BNT}はinstantonの位置と大きさを用い、さらに境界計量の一次応答まで進めた点に進歩がある。
+Erdmenger--Grosvenor--Jefferson\cite{EGJ}は、対称性が生むAdS型計量と真の重力力学を区別し、異なる接続の曲率を混同しないための基準を与える。
+Aoki--Yokoyama\cite{Aoki}は、場を平滑化するflowの尺度を追加座標とし、共形対称性から誘導AdS計量を構成する。
+新しい次元を得る方法がHusimi--Wassersteinだけではないことを示す。
+
+\paragraph{量子情報と重力の力学}
+Lashkari--Van Raamsdonk\cite{LVR}の意義は、単に負曲率を得るのでなく、情報の正値性を重力摂動の正準エネルギーへ結びつけたことである。
+Faulknerら\cite{FLMVR}のentanglement first lawからの線形Einstein方程式の導出も、検証すべき対象を力学へ進める例である。
+Hasegawa--Tanii\cite{HasegawaTanii}は、電束を含むエントロピー処方を用いて、この方向をベクトル・反対称テンソルのゲージ場へ拡張した。
+May--Hijano\cite{Zoo}は、相対エントロピーやfidelityを含む複数の情報量に摂動的なバルク対応を与える。
+そこに現れる$\alpha$--$z$ divergenceの$\alpha$は、式\eqref{eq:alpha}のAmariパラメータと自動的に同じ意味ではない。
+
+\paragraph{接続とsymplectic geometry}
+Belin--Lewkowycz--S\'arosi\cite{BLS}、Kirklin\cite{Kirklin}、Czechら\cite{Modular,Sewing,Changing}は、
+計量以外の情報幾何的な構造にもバルクの正準形式や曲率という対応があることを示す。
+これらを再現することは基準計算として必要だが、今回初めて見つけた対応としては扱えない。
+
+\paragraph{情報幾何のsource・相関への解釈}
+Floerchinger\cite{Floerchinger}は$e,m$接続とsource・期待値、有効作用の構造を既に扱っている。
+従って$C$を三点相関と呼び直すだけの研究は、この先行結果を超えない。
+必要なのは、ゲージ制約や正則化を含む物理的に意味のある量、またはそれが与える新しい関係である。
+
+\paragraph{Wassersteinの別のホログラフィック用途}
+Hashimoto--Tanahashi\cite{HT}は、選んだ量子状態の輸送距離と動径運動を対応づける。
+Hellerら\cite{HPS}はchordの長さ演算子に既存の重力対応を与えるが、同じ問題ではない。
+Ker\"anen\cite{Keranen}の2026年の提案は、Boltzmann重み付きエネルギースペクトル間の$W_2$を、異なる理論の比較とwormholeの鞍点に結びつける。
+ここで距離を入れる対象は、Husimi分布の状態集合ではなく理論・スペクトルの集合である。
+単一のWassersteinホログラフィーが既に統一的に確立しているという読み方は避ける。
+
+\paragraph{entanglementとrenormalization}
+Swingle\cite{Swingle}、Nozaki--Ryu--Takayanagi\cite{cMERA}は、entanglementを整理するネットワークや連続的な粗視化の尺度から幾何を読む。
+これらは全てが古典Fisherの双対接続を使う研究ではないが、「情報から幾何」への別の主要なアプローチである。
+計量の形だけでなく、どの状態のどの情報をどの操作で捨てるかを明示する点が参考になる。
+
+\section{研究候補の新規性・進歩性・物理的意義}
+\subsection{続ける価値はあるが、主題として拡大しない計算}
+Krylov分布の細かい$q$走査、平均長の$\log\cosh$への一致、既知の荷電相関係数の規約変換は、
+再現と誤りの除去という価値を持つ。ただし元の三つの問いへの新しい答えが自動的に増えるわけではない。
+これらは参照例として保存し、未完成のoriented-chord上の荷電挿入の実装を最優先の既定路線とはしない。
+その実装を再開するのは、特定の新しい観測量または新しい有限変形効果を検証する必要が明確になったときである。
+
+\subsection{第一の候補：同じ物理的状態族で情報幾何を比較する}
+問いは、どの距離が一般に勝つかではなく、同じ測定、同じ状態族、同じ単位、同じ既知のバルク量のもとで、
+距離の選択によってどの情報が変わるかである。
+本稿のinstantonとGaussianは解析的な基準を与える。
+次に意味があるのは、対称性だけで答えが固定されない摂動への応答である。
+
+新規性の候補は、表現や輸送コストを後から調整せず、独立に得た摂動方程式や相関関数を再現するかの判定である。
+進歩性には、単なる異なる曲率の列挙でなく、どの仮定がどの物理的予測に必要かを分離することが要る。
+物理的には、状態の識別可能性と空間的な距離を同一視できる範囲を明らかにできる。
+ただし、Gaussianや式\eqref{eq:ads5}--\eqref{eq:w2flat}だけで一つの新しい論文になるとは判断しない。
+
+\subsection{第二の候補：荷電状態の量子幾何とgauge sector}
+元の電磁場の問いを直接調べる主軸として、まず既存のsource--symplectic辞書\cite{BLS,Changing}を採用する。
+境界の保存電流$j^a(x)$にsource$a_a(x)$を結合して状態を準備し、
+バルクではMaxwell場の線形摂動を独立に解く。
+sourceを固定した有限個の滑らかな関数で展開し、その係数を状態パラメータとすれば、
+比較する行列と二形式が有限個の量として定義できる。
+
+基準計算は、球領域へ制限した密度演算子の相対エントロピーHessianと正準エネルギー、
+および全体系の純粋source状態のBerry曲率と式\eqref{eq:maxwellsymplectic}の照合である。
+この二つは異なる状態幾何であり、同一テンソルの実部・虚部だとは無条件に置かない。
+Hasegawa--Taniiのcharged entanglement first lawが同じ境界条件でどう現れるかも照合対象とする。
+これは既知の対応の再現なので、新規性とは数えない。
+その後に、局在した荷電プローブの閉経路位相を調べ、力学的位相、重力による平行移動、内部$U(1)$の位相を分離する。
+
+研究として進める条件は、境界から独立に得た位相について、電荷・経路の向き・プローブの幅を変えたときの予測を、
+バルクのWilson位相とフィットなしで比較できること、dressing依存性と有限幅補正を定量化できることである。
+これが得られれば、単にBerry曲率を$F$と呼び直すことを超えた、位相情報のバルク解釈になる。
+逆に、場を状態の定義へ手で入れたAharonov--Bohm効果の再計算に尽きるなら、主題を拡大しない。
+現段階では、この具体的実装の独自性が確定しているとは言わない。
+
+局所的に伝播するgauge sectorを調べる初期の模型としては、固定AdS$_4$背景上のMaxwell場と荷電スカラーを候補とする。
+AdS$_4$は三空間・一時間次元のanti-de Sitter時空である。
+重力の反作用をまず無視し、境界の時計・ゲージ条件・境界の電束条件を固定する。
+complex SYKは、電荷応答とAdS$_2$の電束に対する別の基準例として残す。
+
+\subsection{第三の候補：双対接続が与える非線形応答}
+$e,m,\alpha$接続を主題とする場合は、source・期待値の双対性から始める。
+バルクのスカラー$\phi$とgauge場に対し
+\begin{equation}
+ S\supset-\frac14\int\dd^{d+1}X\sqrt{-g}\,Z(\phi)F_{\mu\nu}F^{\mu\nu},
+ \qquad Z(\phi)=Z_0+Z_1\phi+\cdots
+ \label{eq:coupling}
+\end{equation}
+を入力し、スカラーのsource方向と二つの電流source方向に対する三次応答を調べる。
+$Z_0$は線形のgauge kinetic係数、$Z_1$はスカラーによるその変化を表す。
+二点相関だけでは相互作用係数$Z_1$を一般には決められない。
+
+ただし、三点相関$\langle Ojj\rangle$から$\phi F^2$頂点を読むこと自体は、通常のホログラフィック相関計算の内容である。
+それを$C$と呼び直すだけでは新規性にならない。
+新しい課題になり得るのは、sourceの再パラメータ化とゲージ変換を除いた三次の幾何的量を定義し、
+局所countertermによる曖昧性を分け、既知の二次データからは分からない応答や制約を取り出すことである。
+countertermとは、短距離発散を取り除くために加える局所項であり、接触項の有限部分にも任意性を残すことがある。
+
+ここでは量子相対エントロピーの二引数から接続を定義するか、正のEuclidean統計モデルを使うかを最初に選ぶ。
+それにより、三次の微分がどの順序の量子相関を含むかも変わる。
+普通のAmari接続と、modular Berry接続を混ぜない。
+これは第一の候補より技術的負担が大きく、今回の検索だけでは未研究と保証できない。
+まず最小のsource族で、既知の三点関数の別表現を超える量が残るかを判定する探索課題とする。
+
+\section{推奨する進め方}
+今後は「Wassersteinで全てを創発させる」を前提にせず、情報幾何の各量が何を再構成するかを先に固定する。
+今回の文献確認と解析的基準計算により、Fisherによる時空構成が存在しないという可能性は除外できる。
+従って、この点を再びSYKの長時間走査で調べる必要はない。
+
+次の実作業は、第二の候補の\emph{一つのsource状態族とゲージ条件を完全に定義すること}に絞る。
+その族で計算する量子情報計量、Berry曲率、対応するバルクのMaxwellシンプレクティック形式を、
+同じ変分・同じ境界条件で並べる。
+まず、各量から背景場が本当に識別できるかを調べ、自由Maxwell場での背景非依存な正準構造を、局所電場の値と取り違えない。
+ここを再現しただけでは新しい結果とせず、その先の荷電holonomyまたは有限分解能の補正を独立に判定する。
+$\alpha$接続の三次応答は、この準備と両立する密度演算子族・divergenceが選べた場合に追加する。
+
+この順序なら、元の三つの問いへ戻ったまま、どこで既存の内容を超えたかを判断できる。
+研究の規模を増やす条件は計算量ではなく、新しいゲージ不変な予測、独立の再構成、または明確な成立・不成立条件を得たことである。
+
+\appendix
+\section{instanton分布と$W_1$の短い検算}
+$a=0,\rho=1$で半径を$r=|x|$とすると、式\eqref{eq:instanton}の動径密度は
+\begin{equation}
+ p_r(r)=\frac{12r^3}{(1+r^2)^4},\qquad r\geq0.
+\end{equation}
+角度平均$\E[x_i^2\mid r]=r^2/4$を使うと、
+\begin{align}
+ \int_0^\infty p_r\dd r&=1,\qquad \int_0^\infty p_r r^2\dd r=2,\\
+ g_{a_ia_i}&=\int_0^\infty p_r\frac{16r^2}{(1+r^2)^2}\dd r=\frac{16}{5},\\
+ g_{\rho\rho}&=\int_0^\infty p_r\frac{16(r^2-1)^2}{(1+r^2)^2}\dd r=\frac{16}{5}.
+\end{align}
+三次テンソルで、回転・反転対称性だけでは直ちに零にならない二種類の成分も
+\begin{align}
+ C_{a_ia_i\rho}&=\int_0^\infty p_r\frac{64r^2(r^2-1)}{(1+r^2)^3}\dd r=0,\\
+ C_{\rho\rho\rho}&=\int_0^\infty p_r\frac{64(r^2-1)^3}{(1+r^2)^3}\dd r=0
+\end{align}
+である。残りは角度の奇関数として零になる。
+並進と拡大縮小で任意の$(a,\rho)$に戻せるため、全ての点で$C=0$である。
+これは文献\cite{BNT}の式(2.38)の再検算である。
+
+式\eqref{eq:w1norm}について、$u=1,v=0$と$u=0,v=1$を使った平行四辺形恒等式の残差は
+\begin{equation}
+ F_1(1,1)^2+F_1(1,-1)^2-2F_1(1,0)^2-2F_1(0,1)^2
+ \simeq-0.5511840389
+\end{equation}
+となり、非零である。コードは\path{src/metric_benchmarks.py}、
+独立のテストは\path{tests/test_metric_benchmarks.py}、検算結果は\path{results/metric_benchmarks/summary.json}に保存する。
+これらは解析的基準の検算であり、新しいホログラフィック対応の数値的証拠ではない。
+
+\begin{thebibliography}{99}
+\bibitem{BNT} M.~Blau, K.~S.~Narain and G.~Thompson, \emph{Instantons, the Information Metric, and the AdS/CFT Correspondence}, \href{https://arxiv.org/abs/hep-th/0108122}{hep-th/0108122} (2001). 特に2.2節、式(2.38)、3--4節。
+\bibitem{EGJ} J.~Erdmenger, K.~T.~Grosvenor and R.~Jefferson, \emph{Information geometry in quantum field theory: lessons from simple examples}, \href{https://arxiv.org/abs/2001.02683v2}{arXiv:2001.02683v2}, SciPost Phys. 8 (2020) 073. 特に2.2、3、8節。
+\bibitem{HT} K.~Hashimoto and N.~Tanahashi, \emph{Holography and Optimal Transport: Emergent Wasserstein Spacetime in Harmonic Oscillator, SYK and Krylov Complexity}, \href{https://arxiv.org/abs/2604.17649v1}{arXiv:2604.17649v1} (2026).
+\bibitem{LiZhao} W.~Li and J.~Zhao, \emph{Wasserstein information matrix}, \href{https://arxiv.org/abs/1910.11248}{arXiv:1910.11248} (2019).
+\bibitem{Petz} D.~Petz and C.~Sud\'ar, \emph{Extending the Fisher metric to density matrices}, \href{https://arxiv.org/abs/quant-ph/0102132}{quant-ph/0102132} (2001).
+\bibitem{LVR} N.~Lashkari and M.~Van Raamsdonk, \emph{Canonical Energy is Quantum Fisher Information}, \href{https://arxiv.org/abs/1508.00897}{arXiv:1508.00897} (2015).
+\bibitem{Miyaji} M.~Miyaji, T.~Numasawa, N.~Shiba, T.~Takayanagi and K.~Watanabe, \emph{Gravity Dual of Quantum Information Metric}, \href{https://arxiv.org/abs/1507.07555}{arXiv:1507.07555} (2015).
+\bibitem{York} A.~Belin, A.~Lewkowycz and G.~S\'arosi, \emph{Complexity and the bulk volume, a new York time story}, \href{https://arxiv.org/abs/1811.03097v2}{arXiv:1811.03097v2} (2018).
+\bibitem{Floerchinger} S.~Floerchinger, \emph{Information geometry of Euclidean quantum fields}, \href{https://arxiv.org/abs/2303.04081v2}{arXiv:2303.04081v2} (2023). 関連する刊行版：\emph{Functional information geometry of Euclidean quantum fields}, Phys. Rev. D 110 (2024) 125027, \href{https://doi.org/10.1103/PhysRevD.110.125027}{doi:10.1103/PhysRevD.110.125027}。
+\bibitem{BLS} A.~Belin, A.~Lewkowycz and G.~S\'arosi, \emph{The boundary dual of the bulk symplectic form}, \href{https://arxiv.org/abs/1806.10144v2}{arXiv:1806.10144v2} (2018).
+\bibitem{Kirklin} J.~Kirklin, \emph{The Holographic Dual of the Entanglement Wedge Symplectic Form}, \href{https://arxiv.org/abs/1910.00457}{arXiv:1910.00457}, JHEP 01 (2020) 071.
+\bibitem{Modular} B.~Czech, L.~Lamprou, S.~McCandlish and J.~Sully, \emph{Modular Berry Connection}, \href{https://arxiv.org/abs/1712.07123v2}{arXiv:1712.07123v2}, Phys. Rev. Lett. 120 (2018) 091601.
+\bibitem{Sewing} B.~Czech, J.~de Boer, D.~Ge and L.~Lamprou, \emph{A Modular Sewing Kit for Entanglement Wedges}, \href{https://arxiv.org/abs/1903.04493}{arXiv:1903.04493} (2019).
+\bibitem{Changing} B.~Czech, J.~de Boer, R.~Esp\'indola, B.~Najian, J.~van der Heijden and C.~Zukowski, \emph{Changing states in holography: From modular Berry curvature to the bulk symplectic form}, \href{https://arxiv.org/abs/2305.16384v2}{arXiv:2305.16384v2} (2023).
+\bibitem{Aoki} S.~Aoki and S.~Yokoyama, \emph{Flow equation, conformal symmetry and AdS geometry}, \href{https://arxiv.org/abs/1707.03982}{arXiv:1707.03982} (2017).
+\bibitem{HasegawaTanii} K.~Hasegawa and Y.~Tanii, \emph{Linearized Field Equations of Gauge Fields from the Entanglement First Law}, \href{https://arxiv.org/abs/1905.10084v4}{arXiv:1905.10084v4}, JHEP 08 (2019) 156. 特に2節、式(3.26)--(3.33)、5節。
+\bibitem{FLMVR} T.~Faulkner, M.~Guica, T.~Hartman, R.~C.~Myers and M.~Van Raamsdonk, \emph{Gravitation from Entanglement in Holographic CFTs}, \href{https://arxiv.org/abs/1312.7856}{arXiv:1312.7856} (2013).
+\bibitem{Zoo} A.~May and E.~Hijano, \emph{The holographic entropy zoo}, \href{https://arxiv.org/abs/1806.06077}{arXiv:1806.06077} (2018).
+\bibitem{HPS} M.~P.~Heller, J.~Papalini and T.~Schuhmann, \emph{Krylov spread complexity as holographic complexity beyond JT gravity}, \href{https://arxiv.org/abs/2412.17785v2}{arXiv:2412.17785v2} (2024).
+\bibitem{FKN} S.~F\"orste, Y.~Kruse and S.~Natu, \emph{Grand Canonical vs Canonical Krylov Complexity in Double-Scaled Complex SYK Model}, \href{https://arxiv.org/abs/2512.07715v2}{arXiv:2512.07715v2} (2025).
+\bibitem{BNR} M.~Berkooz, V.~Narovlansky and H.~Raj, \emph{Complex Sachdev--Ye--Kitaev model in the double scaling limit}, \href{https://arxiv.org/abs/2006.13983}{arXiv:2006.13983}, JHEP 02 (2021) 113.
+\bibitem{GST} E.~Gubankova, S.~Sachdev and G.~Tarnopolsky, \emph{Scaling limits of complex Sachdev--Ye--Kitaev models and holographic geometry}, \href{https://arxiv.org/abs/2512.05294v2}{arXiv:2512.05294v2} (2025/2026).
+\bibitem{Keranen} V.~Ker\"anen, \emph{Notes on Wasserstein distance and wormholes}, \href{https://arxiv.org/abs/2606.01296v2}{arXiv:2606.01296v2} (2026). 異なる理論のスペクトル間の距離を扱う。
+\bibitem{Swingle} B.~Swingle, \emph{Entanglement Renormalization and Holography}, \href{https://arxiv.org/abs/0905.1317}{arXiv:0905.1317} (2009).
+\bibitem{cMERA} M.~Nozaki, S.~Ryu and T.~Takayanagi, \emph{Holographic Geometry of Entanglement Renormalization in Quantum Field Theories}, \href{https://arxiv.org/abs/1208.3469}{arXiv:1208.3469} (2012).
+\end{thebibliography}
+\end{document}

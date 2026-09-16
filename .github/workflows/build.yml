@@ -40,13 +40,14 @@ jobs:
           python src/phase_space.py --output results/phase_space
           python src/boundary_probe.py --output results/boundary_probe
           python src/charged_probe.py --output results/charged_probe
+          python src/metric_benchmarks.py --output results/metric_benchmarks
       - name: Install LuaLaTeX and Japanese typesetting
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends latexmk texlive-luatex texlive-lang-japanese texlive-latex-extra
       - name: Compile research notes
         run: |
-          for topic in note geodesic state_distance phase_space boundary_probe charged_probe; do
+          for topic in note geodesic state_distance phase_space boundary_probe charged_probe reassessment; do
             latexmk -lualatex -interaction=nonstopmode -halt-on-error -outdir=build "notes/${topic}.tex"
           done
       - name: Upload PDF and verification results
@@ -60,6 +61,7 @@ jobs:
             build/phase_space.pdf
             build/boundary_probe.pdf
             build/charged_probe.pdf
+            build/reassessment.pdf
             results/
           if-no-files-found: error
           retention-days: 90
@@ -73,12 +75,12 @@ jobs:
             exit 0
           fi
           mkdir -p docs
-          for topic in note geodesic state_distance phase_space boundary_probe charged_probe; do
+          for topic in note geodesic state_distance phase_space boundary_probe charged_probe reassessment; do
             cp "build/${topic}.pdf" "docs/${topic}.pdf"
           done
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/note.pdf docs/geodesic.pdf docs/state_distance.pdf docs/phase_space.pdf docs/boundary_probe.pdf docs/charged_probe.pdf results/
+          git add docs/note.pdf docs/geodesic.pdf docs/state_distance.pdf docs/phase_space.pdf docs/boundary_probe.pdf docs/charged_probe.pdf docs/reassessment.pdf results/
           if ! git diff --cached --quiet; then
             git commit -m 'Build research notes and refresh verification results'
             git push origin HEAD:main
