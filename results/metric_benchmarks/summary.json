@@ -1,0 +1,16 @@
+{
+  "meaning": "Standard exact benchmarks; no numerical inference of a bulk theory.",
+  "source_fisher_and_cubic": "Blau-Narain-Thompson hep-th/0108122 Eqs.(2.12)-(2.16),(2.38)",
+  "instanton": {
+    "normalization": "1",
+    "second_radial_moment": "2",
+    "fisher_translation_component_at_unit_scale": "16/5",
+    "fisher_scale_component_at_unit_scale": "16/5",
+    "cubic_translation_translation_scale": "0",
+    "cubic_scale_scale_scale": "0"
+  },
+  "gaussian_W1_parallelogram_residual": -0.5511840389196914,
+  "instanton_W2_squared": "|a-b|^2+2*(rho-sigma)^2 for the Euclidean ground cost",
+  "instanton_Fisher_line_element": "(16/5)*(|da|^2+drho^2)/rho^2",
+  "instanton_all_alpha_connections": "Levi-Civita, since the cubic tensor is zero; curvature is not zero"
+}
